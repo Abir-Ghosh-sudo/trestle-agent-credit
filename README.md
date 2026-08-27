@@ -1,187 +1,314 @@
-# Trestle 🏛️
+🏛️ Trestle
 
-### On-Chain Credit Infrastructure for Autonomous AI Agents
+On-Chain Credit Infrastructure for Autonomous AI Agents
 
-> **What if AI agents could build credit, borrow for productive tasks, and repay automatically — entirely on-chain?**
+<p align="center">
+  <strong>Give AI agents a financial identity, reputation, and programmable access to credit.</strong>
+</p>
 
-**Trestle** is an on-chain credit protocol for autonomous AI agents, built on **Algorand**.
+<p align="center">
+  <a href="https://trestle-dev.vercel.app/">🚀 Live Demo</a> •
+  <a href="https://github.com/ShahiTechnovation/Trestle">💻 Repository</a> •
+  <a href="#-quick-start">⚡ Quick Start</a> •
+  <a href="#-architecture">🏗️ Architecture</a>
+</p>
 
-It gives AI agents a programmable financial identity: agents can stake ALGO, build repayment history, access credit based on their reputation, and use that credit to pay for APIs and agentic services.
+<p align="center">
+  <img src="https://img.shields.io/badge/Network-Algorand%20Testnet-black?style=for-the-badge&logo=algorand" alt="Algorand Testnet">
+  <img src="https://img.shields.io/badge/AI-Risk%20Oracle-7C3AED?style=for-the-badge" alt="AI Risk Oracle">
+  <img src="https://img.shields.io/badge/Payments-x402-2563EB?style=for-the-badge" alt="x402">
+  <img src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge" alt="MIT License">
+</p>
 
-The key idea is simple:
+🌐 Live Demo
 
-**AI evaluates the task → Trestle evaluates the risk → Algorand settles the credit → the agent repays → reputation grows.**
+Try Trestle in your browser:
+🚀 https://trestle-dev.vercel.app/
 
----
+The deployed frontend provides a visual interface for exploring the Trestle credit workflow and its Algorand-based agent infrastructure.
 
-## 🏆 Built for Hacker House Goa
+⚠️ Note: Trestle is currently a testnet hackathon prototype. It is not production financial infrastructure and should not be used with real funds.
 
-Trestle is built as a hackathon-focused prototype exploring the intersection of:
+💡 What is Trestle?
 
-* 🤖 **AI Agents**
-* 💳 **Agentic Payments**
-* ⛓️ **Blockchain Credit**
-* 🔐 **On-chain Reputation**
-* ⚡ **Algorand**
-* 💰 **x402 Machine-to-Machine Payments**
+Trestle is an on-chain credit protocol for autonomous AI agents, built on Algorand.
 
-The project demonstrates how autonomous agents could move beyond prepaid wallets toward **reputation-based financial infrastructure**.
+It explores a simple question:
 
----
+What if AI agents could build credit, borrow for productive tasks, and repay automatically — entirely on-chain?
 
-## 🚀 Why Trestle?
+Trestle gives an AI agent a programmable financial identity. An agent can:
 
-AI agents can already:
+🪙 Stake ALGO
 
-* Execute code
-* Call APIs
-* Interact with smart contracts
-* Make blockchain transactions
-* Perform autonomous tasks
+📈 Build an on-chain repayment history
 
-But they still have one major limitation:
+🏦 Access credit based on reputation
 
-> **An AI agent cannot easily access short-term capital when it runs out of funds.**
+🤖 Use AI-assisted risk evaluation before borrowing
 
-If an agent needs 0.05 ALGO to complete a profitable API task but only has 0.01 ALGO, the task stops.
+⚡ Pay for APIs and agentic services
 
-Trestle introduces an on-chain credit layer that allows an agent to:
+🔄 Repay outstanding credit
 
-```text
+⭐ Improve its reputation through successful payment activity
+
+The Core Loop
+
         AI Agent
            │
            ▼
-     Task / Payment
+      Task / Payment
            │
            ▼
-    ┌───────────────┐
-    │ Risk Oracle   │
-    │   LLM + Rules │
-    └───────┬───────┘
+   ┌─────────────────┐
+   │   Risk Oracle   │
+   │    LLM + Rules  │
+   └────────┬────────┘
             │
        Approved?
        ┌────┴────┐
-       │         │
       YES        NO
-       │         │
-       ▼         ▼
+       │          │
+       ▼          ▼
   Draw Credit   Reject
        │
        ▼
-  Pay / Execute
+ Pay / Execute
        │
        ▼
      Repay
        │
        ▼
-  Build Reputation
-```
+ Build Reputation
 
----
+AI evaluates the task → Trestle evaluates the risk → Algorand settles the credit → the agent repays → reputation grows.
 
-# ✨ Core Features
+🏆 Built for Hacker House Goa
 
-### 🧠 LLM-Gated Credit
+Trestle is a hackathon-focused prototype exploring the intersection of:
+
+Area
+
+Role in Trestle
+
+🤖 AI Agents
+
+Autonomous task execution and financial decisions
+
+🧠 AI Risk Assessment
+
+Evaluates whether a proposed credit draw is acceptable
+
+⛓️ Blockchain Credit
+
+On-chain credit state and repayment
+
+🔐 On-chain Reputation
+
+Payment history influences agent trust
+
+⚡ Algorand
+
+Fast, low-cost deterministic settlement
+
+💳 x402
+
+Machine-to-machine API payment flow
+
+The broader idea is to move autonomous agents beyond pre-funded wallets toward reputation-based financial infrastructure.
+
+🚀 Why Trestle?
+
+AI agents can already:
+
+Execute code
+
+Call APIs
+
+Interact with smart contracts
+
+Make blockchain transactions
+
+Perform autonomous tasks
+
+But an agent normally needs funds before it can perform a paid task.
+
+For example:
+
+Agent balance:       0.01 ALGO
+Task cost:           0.05 ALGO
+Expected return:     0.08 ALGO
+
+Without credit:
+❌ Task cannot execute
+
+With Trestle:
+🧠 Risk evaluation
+       ↓
+✅ Credit approved
+       ↓
+💸 Task executed
+       ↓
+🔄 Agent repays
+       ↓
+⭐ Reputation improves
+
+Trestle explores whether an agent's verified financial behavior can become the basis for future borrowing capacity.
+
+✨ Core Features
+
+🧠 LLM-Gated Credit
 
 Before a credit draw reaches the blockchain, an LLM evaluates the proposed task against predefined risk criteria.
 
-### ⛓️ On-Chain Reputation
+⛓️ On-Chain Reputation
 
-Agents build a financial history through recorded repayments and payment activity.
+Agents build a financial history through recorded repayment and payment activity.
 
-### 💰 Reputation-Based Credit
+💰 Reputation-Based Credit
 
-An agent's tier determines its available credit limit and interest rate.
+An agent's credit tier determines its available borrowing limit and interest rate.
 
-### 🛡️ Responsible Borrowing
+🛡️ Responsible Borrowing
 
-Credit requests can be rejected before an on-chain transaction is submitted when the task fails the protocol's risk requirements.
+Requests can be rejected before an on-chain transaction is submitted when the task fails protocol risk requirements.
 
-### ⚡ x402 Integration
+⚡ x402 Integration
 
-Trestle can act as the credit layer behind x402-powered API payments.
+Trestle can act as a credit layer for x402-protected API payments, allowing an agent to respond to HTTP 402 Payment Required flows.
 
-### 🔄 Autonomous Repayment
+🔄 Autonomous Repayment
 
-Agents can repay their outstanding balance after completing their task and record the successful payment as part of their reputation history.
+After completing a task, the agent can repay its outstanding balance and record successful payment activity.
 
-### 🔀 Intent Router
+🔀 Intent Router
 
-The project also includes an experimental intent-based swap flow where an agent can use Trestle credit to finance a swap task.
+The prototype also includes an experimental intent-based swap flow where Trestle credit can finance a swap task.
 
----
+🧠 Risk Oracle
 
-# 🧠 The Risk Oracle
+The Risk Oracle evaluates each credit request using four main criteria:
 
-The oracle evaluates every credit request using four criteria.
+Criterion
 
-| Criterion         | Requirement                                 |
-| ----------------- | ------------------------------------------- |
-| 💵 Return vs Cost | Expected return must exceed loan + interest |
-| ⏱️ Time           | Task must fit within the repayment window   |
-| 🔒 Existing Debt  | Agent cannot have outstanding debt          |
-| ⚠️ Risk           | LLM risk level must be `low` or `medium`    |
+Requirement
 
-### Decision Flow
+💵 Return vs Cost
 
-```text
+Expected return must exceed loan + interest
+
+⏱️ Time
+
+Task must fit within the repayment window
+
+🔒 Existing Debt
+
+Agent cannot have outstanding debt
+
+⚠️ Risk
+
+LLM risk level must be low or medium
+
+Decision Flow
+
 Credit Request
       │
       ▼
 Expected Return > Cost?
       │
-      ├── No ──► ❌ Denied
-      │
-      ▼
-Task within repayment window?
-      │
-      ├── No ──► ❌ Denied
-      │
-      ▼
-Outstanding debt?
-      │
-      ├── Yes ──► ❌ Denied
-      │
-      ▼
-Risk acceptable?
-      │
-      ├── No ──► ❌ Denied
-      │
-      ▼
-   ✅ Approved
-      │
-      ▼
- Submit on-chain draw
-```
+   ┌──┴──┐
+  No    Yes
+  │      │
+  ▼      ▼
+❌      Task within
+Denied  repayment window?
+          │
+       ┌──┴──┐
+      No    Yes
+      │      │
+      ▼      ▼
+     ❌    Outstanding debt?
+    Denied      │
+             ┌──┴──┐
+            Yes    No
+             │      │
+             ▼      ▼
+            ❌    Risk acceptable?
+           Denied      │
+                    ┌──┴──┐
+                   No    Yes
+                   │      │
+                   ▼      ▼
+                  ❌    ✅ Approved
+                 Denied      │
+                             ▼
+                     Submit on-chain draw
 
-The LLM acts as a **risk assessment layer**, while the smart contract enforces the financial state and protocol rules.
+The LLM acts as the risk assessment layer, while the smart contract enforces financial state and protocol rules.
 
----
+🏦 Credit Tiers
 
-# 🏦 Credit Tiers
+Successful payment activity improves an agent's credit profile.
 
-Agents improve their credit profile through verified payment activity.
+Tier
 
-| Tier | Name    | Minimum Payments | Maximum Draw | APR |
-| ---: | ------- | ---------------: | -----------: | --: |
-|    0 | Fresh   |                0 |    0.10 ALGO | 24% |
-|    1 | Trusted |               10 |    0.50 ALGO | 16% |
-|    2 | Veteran |               50 |    2.00 ALGO |  9% |
-|    3 | Elite   |              100 |    5.00 ALGO |  4% |
+Name
 
-The tier system is designed around a simple principle:
+Minimum Payments
 
-> **Better repayment history → higher trust → greater borrowing capacity → lower cost of credit.**
+Maximum Draw
 
----
+APR
 
-# ⚡ x402 Integration
+0
 
-Trestle can provide the financing layer for autonomous agents interacting with **x402-protected APIs**.
+🆕 Fresh
 
-### Payment Flow
+0
 
-```text
+0.10 ALGO
+
+24%
+
+1
+
+🤝 Trusted
+
+10
+
+0.50 ALGO
+
+16%
+
+2
+
+🛡️ Veteran
+
+50
+
+2.00 ALGO
+
+9%
+
+3
+
+👑 Elite
+
+100
+
+5.00 ALGO
+
+4%
+
+Better repayment history → higher trust → greater borrowing capacity → lower cost of credit.
+
+⚡ x402 Integration
+
+Trestle can provide the financing layer for autonomous agents interacting with x402-protected APIs.
+
+Payment Flow
+
 AI Agent
    │
    ▼
@@ -196,35 +323,39 @@ Trestle Credit Request
    ▼
 LLM Risk Oracle
    │
-   ├── ❌ Denied
-   │
-   └── ✅ Approved
-           │
-           ▼
-      Draw Credit
-           │
-           ▼
-      Pay API
-           │
-           ▼
-      Retry Request
-           │
-           ▼
-       Get Data
-           │
-           ▼
-        Repay
-           │
-           ▼
-   Record Payment
-           │
-           ▼
-   Improve Reputation
-```
+ ┌─┴─────────┐
+ ▼           ▼
+❌ Denied   ✅ Approved
+             │
+             ▼
+         Draw Credit
+             │
+             ▼
+          Pay API
+             │
+             ▼
+        Retry Request
+             │
+             ▼
+          Get Data
+             │
+             ▼
+           Repay
+             │
+             ▼
+      Record Payment
+             │
+             ▼
+      Improve Reputation
 
-### Python Example
+The goal is to hide the complexity of:
 
-```python
+402 → Credit → Payment → Retry → Repayment → Reputation
+
+behind a developer-friendly interface.
+
+Python Example
+
 from trestle_sdk.x402_client import TrestleX402Client
 
 client = TrestleX402Client(
@@ -237,25 +368,11 @@ response = client.get(
 )
 
 print(response.json())
-```
 
-The goal is to hide the complexity of:
-
-```text
-402 → Credit → Payment → Retry → Repayment → Reputation
-```
-
-behind a developer-friendly interface.
-
----
-
-# 🔀 Intent Router
+🔀 Intent Router
 
 Trestle also includes an experimental intent-based swap architecture.
 
-### Flow
-
-```text
 Agent 1
    │
    │ Lock ALGO
@@ -281,120 +398,116 @@ Execute Swap
 Atomic Settlement
    │
    ├── Trestle Repaid
-   │
    └── Agent 2 Profit
-```
 
-Run the demo:
+Run the demo
 
-```bash
 python demo/intent_demo.py
-```
 
-Deploy the router:
+Deploy the router
 
-```bash
 ADMIN_MNEMONIC="..." \
 TRESTLE_APP_ID=<YOUR_APP_ID> \
 python contracts/deploy_router.py
-```
 
----
-
-# 🏗️ Architecture
+🏗️ Architecture
 
 Trestle currently follows a three-layer architecture:
 
-```text
-┌─────────────────────────────────────────────┐
-│              FRONTEND / AGENT               │
-│         React + Vite + Wallets              │
-└──────────────────────┬──────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────┐
-│                 SDK LAYER                   │
-│      Python SDK + LLM Risk Oracle           │
-│         Venice AI / Anthropic                │
-└──────────────────────┬──────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────┐
-│             ALGORAND CONTRACT               │
-│       Credit • Reputation • Repayment        │
-│           Treasury • Slashing               │
-└─────────────────────────────────────────────┘
-```
+┌──────────────────────────────────────────────┐
+│               FRONTEND / AGENT              │
+│          React + Vite + Wallets             │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│                  SDK LAYER                  │
+│       Python SDK + LLM Risk Oracle          │
+│           Venice AI / Anthropic             │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│              ALGORAND CONTRACT              │
+│      Credit • Reputation • Repayment        │
+│          Treasury • Slashing                │
+└──────────────────────────────────────────────┘
 
-### Technology Stack
+🧰 Technology Stack
 
-| Layer          | Technology                     |
-| -------------- | ------------------------------ |
-| Blockchain     | Algorand Testnet               |
-| Smart Contract | Algorand Python / Puya / ARC-4 |
-| SDK            | Python                         |
-| AI Oracle      | Venice AI / Anthropic          |
-| Frontend       | React + Vite                   |
-| Wallets        | Pera / Defly                   |
-| Payments       | x402                           |
-| Testing        | Python test suite              |
+Layer
 
----
+Technology
 
-# ⚡ Quick Start
+⛓️ Blockchain
 
-## 1. Clone the repository
+Algorand Testnet
 
-```bash
+📜 Smart Contract
+
+Algorand Python / Puya / ARC-4
+
+🐍 SDK
+
+Python
+
+🧠 AI Oracle
+
+Venice AI / Anthropic
+
+🌐 Frontend
+
+React + Vite
+
+👛 Wallets
+
+Pera / Defly
+
+💳 Payments
+
+x402
+
+🧪 Testing
+
+Python test suite
+
+⚡ Quick Start
+
+1. Clone the repository
+
 git clone https://github.com/ShahiTechnovation/Trestle
 cd Trestle
-```
 
-## 2. Install the SDK
+2. Install the SDK
 
-```bash
 pip install -e "./trestle_sdk"
-```
 
 Or install the published SDK:
 
-```bash
 pip install trestle-sdk
-```
 
-## 3. Configure environment variables
+3. Configure environment variables
 
-```bash
 cp contracts/.env.example contracts/.env
-```
 
 Configure:
 
-```env
 AGENT_MNEMONIC=your-testnet-mnemonic
 TRESTLE_APP_ID=your-testnet-app-id
 VENICE_API_KEY=your-venice-api-key
-```
 
-> ⚠️ **Never commit a mnemonic, private key, or API key to GitHub.**
+🔐 Never commit a mnemonic, private key, or API key to GitHub.
 
-## 4. Run the demo
+4. Run the demo
 
-```bash
 python demo/SDK_DEMO.py
-```
 
-## 5. Run tests
+5. Run tests
 
-```bash
 python tests/test_sdk.py
-```
 
----
+🤖 SDK Usage
 
-# 🤖 SDK Usage
-
-```python
 import os
 
 from trestle_sdk import (
@@ -423,22 +536,16 @@ try:
 
 except TrestleCreditDenied as e:
     print("Credit denied:", e.reason)
-```
 
 If the oracle rejects the request:
 
-```text
 TrestleCreditDenied
         │
         ▼
 No blockchain draw submitted
-```
 
----
+🧪 Example: Approved Draw
 
-# 🧪 Example: Approved Draw
-
-```text
 trestle-agent v0.2.0 | testnet
 
 stake_amount:   1000000 uALGO
@@ -465,13 +572,9 @@ result: 2814.22
 
 repayment: 50001 uALGO
 outstanding: 0
-```
 
----
+🚫 Example: Rejected Draw
 
-# 🚫 Example: Rejected Draw
-
-```text
 oracle evaluating draw request...
 
 task:
@@ -488,173 +591,230 @@ reason:
 Critical-risk speculative activity is not permitted.
 
 No transaction submitted.
-```
 
-This is an important part of the design:
+A rejected request does not create an on-chain credit draw.
 
-> **A rejected request does not create an on-chain credit draw.**
-
----
-
-# 🧩 Oracle Providers
+🧩 Oracle Providers
 
 Trestle supports configurable LLM providers.
 
-## Venice AI
+Venice AI
 
 Venice is the default provider.
 
-```bash
 export ORACLE_PROVIDER=venice
 export VENICE_API_KEY=your-key
 
 python demo/SDK_DEMO.py
-```
 
-The current implementation uses:
+Current implementation:
 
-```text
 llama-3.3-70b
-```
 
-## Anthropic
+Anthropic
 
-```bash
 export ORACLE_PROVIDER=anthropic
 export ANTHROPIC_API_KEY=your-key
 
 pip install -e "./trestle_sdk[anthropic]"
 
 python demo/SDK_DEMO.py
-```
 
-The current implementation uses:
+Current implementation:
 
-```text
 claude-haiku-4-5-20251001
-```
 
----
+⛓️ Smart Contract
 
-# ⛓️ Smart Contract
+Network: Algorand Testnet
+Application ID: <YOUR_APP_ID>
 
-**Network:** Algorand Testnet
+Replace <YOUR_APP_ID> after deploying your own contract instance.
 
-**Application ID:** `<YOUR_APP_ID>`
+Contract Methods
 
-> Replace `<YOUR_APP_ID>` after deploying your own contract instance.
+Method
 
-### Contract Methods
+Purpose
 
-| Method               | Purpose                          |
-| -------------------- | -------------------------------- |
-| `opt_in`             | Bootstrap local agent state      |
-| `register`           | Register an agent and stake ALGO |
-| `record_payment`     | Record payment activity          |
-| `draw`               | Draw credit                      |
-| `repay`              | Repay outstanding credit         |
-| `slash`              | Slash a delinquent agent         |
-| `get_position`       | Read agent credit position       |
-| `enable_attestation` | Enable attestation verification  |
-| `fund`               | Fund the protocol treasury       |
+opt_in
 
----
+Bootstrap local agent state
 
-# 📦 Agent State
+register
+
+Register an agent and stake ALGO
+
+record_payment
+
+Record payment activity
+
+draw
+
+Draw credit
+
+repay
+
+Repay outstanding credit
+
+slash
+
+Slash a delinquent agent
+
+get_position
+
+Read agent credit position
+
+enable_attestation
+
+Enable attestation verification
+
+fund
+
+Fund the protocol treasury
+
+📦 Agent State
 
 The smart contract tracks:
 
-| State                | Description                        |
-| -------------------- | ---------------------------------- |
-| `stake_amount`       | Agent's staked ALGO                |
-| `payment_count`      | Recorded payment count             |
-| `total_repaid`       | Lifetime repayment amount          |
-| `outstanding`        | Current unpaid balance             |
-| `credit_limit`       | Current credit limit               |
-| `is_defaulted`       | Whether the agent has been slashed |
-| `last_payment_round` | Last recorded payment round        |
+State
 
----
+Description
 
-# 🔐 Security Model
+stake_amount
 
-Trestle separates **AI decision-making** from **on-chain enforcement**.
+Agent's staked ALGO
 
-### Off-chain
+payment_count
+
+Recorded payment count
+
+total_repaid
+
+Lifetime repayment amount
+
+outstanding
+
+Current unpaid balance
+
+credit_limit
+
+Current credit limit
+
+is_defaulted
+
+Whether the agent has been slashed
+
+last_payment_round
+
+Last recorded payment round
+
+🔐 Security Model
+
+Trestle deliberately separates AI decision-making from on-chain enforcement.
+
+Off-chain
 
 The LLM evaluates:
 
-* Task description
-* Expected return
-* Estimated execution time
-* Risk level
+Task description
 
-### On-chain
+Expected return
+
+Estimated execution time
+
+Risk level
+
+On-chain
 
 The smart contract maintains:
 
-* Agent identity
-* Stake
-* Credit limit
-* Outstanding debt
-* Repayment history
-* Default state
-* Treasury balance
+Agent identity
 
-This architecture allows the AI layer to assess intent while the blockchain remains the source of truth for financial state.
+Stake
 
----
+Credit limit
 
-# ⚠️ Current Limitations
+Outstanding debt
 
-Trestle is currently a **testnet hackathon prototype**, so several components are intentionally simplified.
+Repayment history
 
-### 1. Testnet Environment
+Default state
+
+Treasury balance
+
+┌─────────────────────┐
+│      AI Layer       │
+│                     │
+│  Intent + Risk      │
+│  Assessment         │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│   Algorand Layer    │
+│                     │
+│  Financial State    │
+│  + Enforcement      │
+└─────────────────────┘
+
+This allows the AI layer to assess intent and risk, while Algorand remains the source of truth for financial state.
+
+⚠️ Current Limitations
+
+Trestle is currently a testnet hackathon prototype, so several components are intentionally simplified.
+
+1. Testnet Environment
 
 The system currently targets Algorand Testnet and should not be treated as production financial infrastructure.
 
-### 2. Payment History
+2. Payment History
 
-`payment_count` can currently be self-reported.
+payment_count can currently be self-reported.
 
 A future version should require bilateral verification from the payment counterparty.
 
-### 3. Attestation
+3. Attestation
 
 The current testnet configuration can skip attestation verification.
 
 Attestation verification should be enabled before production deployment.
 
-### 4. Treasury
+4. Treasury
 
 The protocol treasury must currently be funded manually.
 
-### 5. Slash Window
+5. Slash Window
 
 The prototype uses a short slash window suitable for demonstrations.
 
 A production implementation should use a substantially longer repayment period.
 
----
+🗺️ Roadmap
 
-# 🗺️ Roadmap
+V2
 
-## V2
+💵 USDC / ASA-denominated credit
 
-* [ ] USDC / ASA-denominated credit
-* [ ] Verifiable / ZK oracle attestations
-* [ ] Bilateral payment verification
-* [ ] Automated treasury liquidity management
-* [ ] Treasury insurance pool
-* [ ] Persistent agent identity registry
-* [ ] Cross-chain deployment
-* [ ] Production-grade repayment windows
-* [ ] Stronger x402 integrations
+🔐 Verifiable / ZK oracle attestations
 
-### Long-Term Vision
+🤝 Bilateral payment verification
 
-```text
-Today
+💧 Automated treasury liquidity management
+
+🛡️ Treasury insurance pool
+
+🪪 Persistent agent identity registry
+
+🌉 Cross-chain deployment
+
+⏳ Production-grade repayment windows
+
+⚡ Stronger x402 integrations
+
+Long-Term Vision
+
+TODAY
  │
  ├── Testnet credit
  ├── AI risk assessment
@@ -669,29 +829,25 @@ V2
  └── Automated liquidity
         │
         ▼
-Future
+FUTURE
  │
  └── Open credit infrastructure
      for autonomous agents
-```
 
----
-
-# 💡 The Bigger Idea
+💡 The Bigger Idea
 
 Trestle is not simply a lending contract.
 
 It explores a new primitive:
 
-> **Creditworthiness for software agents.**
+Creditworthiness for software agents.
 
 Human financial systems use credit histories to determine who can borrow.
 
-Autonomous agents need a similar mechanism.
+Autonomous agents may need a similar mechanism.
 
-Instead of:
+Traditional Model
 
-```text
 Human
   ↓
 Bank
@@ -699,11 +855,9 @@ Bank
 Credit Score
   ↓
 Loan
-```
 
-Trestle explores:
+Trestle Model
 
-```text
 AI Agent
   ↓
 On-chain Reputation
@@ -719,15 +873,11 @@ Task
 Repayment
   ↓
 Better Reputation
-```
 
-This creates the possibility of a future where autonomous agents can participate in machine-to-machine commerce without requiring a human to manually fund every transaction.
+The long-term possibility is a machine economy where autonomous agents can participate in machine-to-machine commerce without requiring a human to manually fund every transaction.
 
----
+🧑‍💻 Project Structure
 
-# 🧑‍💻 Project Structure
-
-```text
 Trestle/
 │
 ├── contracts/
@@ -750,82 +900,83 @@ Trestle/
 │   └── ...
 │
 └── README.md
-```
 
----
-
-# 🛠️ Development
+🛠️ Development
 
 Install the SDK in editable mode:
 
-```bash
 pip install -e "./trestle_sdk"
-```
 
 Run the SDK demo:
 
-```bash
 python demo/SDK_DEMO.py
-```
 
 Run tests:
 
-```bash
 python tests/test_sdk.py
-```
 
 Run the intent demo:
 
-```bash
 python demo/intent_demo.py
-```
 
----
-
-# 🤝 Contributing
+🤝 Contributing
 
 Contributions are welcome.
 
 If you want to improve Trestle:
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add or update tests
-5. Open a pull request
+Fork the repository
 
-Example:
+Create a feature branch
 
-```bash
+Make your changes
+
+Add or update tests
+
+Open a pull request
+
 git checkout -b feature/my-feature
 git add .
 git commit -m "feat: add my feature"
 git push origin feature/my-feature
-```
 
----
+📜 License
 
-# 📜 License
+This project is released under the MIT License.
 
-This project is released under the **MIT License**.
-
----
-
-## 🌐 Built on Algorand
+⛓️ Built on Algorand
 
 Trestle uses Algorand for fast, low-cost, deterministic on-chain settlement and state management.
 
----
+The protocol combines:
 
-# 🏆 Hackathon Project
+AI Risk Assessment + On-Chain Reputation + Programmable Credit + x402 Payments
 
-**Trestle**
-*On-Chain Credit for Autonomous AI Agents*
+to explore a new financial primitive for autonomous software agents.
 
-Built for **Hacker House Goa** with the goal of exploring how blockchain-based reputation and AI-driven risk assessment can enable a more autonomous machine economy.
+🏆 Hacker House Goa
 
----
+Trestle — On-Chain Credit for Autonomous AI Agents
 
-### ⭐ If you find the idea interesting
+Built for Hacker House Goa with the goal of exploring how blockchain-based reputation and AI-driven risk assessment can enable a more autonomous machine economy.
 
-Give the repository a star, explore the demos, and help us rethink what **credit for AI agents** could look like.
+⭐ Support the Project
+
+If you find the idea interesting:
+
+⭐ Star the repository
+
+🚀 Try the Live Demo
+
+🧪 Explore the demos
+
+💡 Open issues and suggest improvements
+
+🤝 Contribute to the project
+
+Let's rethink what credit could look like when the borrower is an AI agent.
+
+<p align="center">
+  <strong>🏛️ Trestle</strong><br>
+  <em>Credit infrastructure for the autonomous agent economy.</em>
+</p>
