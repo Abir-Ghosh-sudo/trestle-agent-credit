@@ -1,0 +1,22 @@
+--- a/frontend/src/lib/contract.js
++++ b/frontend/src/lib/contract.js
+@@ -34,7 +34,11 @@ export const APP_ADDRESS = requireEnvString(
+ 
+-export const USDC_APP_ID = requireEnvNumber("VITE_USDC_APP_ID", 0);
++export const USDC_APP_ID = requireEnvNumber("VITE_USDC_APP_ID", 0);
++
++// FIX 03: runtime guard — exported so ContractState can check it
++export const USDC_CONFIGURED = USDC_APP_ID > 0;
+ 
+ if (import.meta.env.DEV && (APP_ID === 0 || USDC_APP_ID === 0)) {
+   console.warn(
+-    "[Trestle] APP_ID / USDC_APP_ID are not configured. " +
++    "[Trestle] ??  APP_ID / USDC_APP_ID are not configured. " +
+     "Deploy your own contracts and set VITE_APP_ID / VITE_USDC_APP_ID " +
+     "in frontend/.env — see frontend/.env.example."
+   );
++  // In production, surface as a visible error, not just a console.warn
++  if (!import.meta.env.DEV) {
++    throw new Error("VITE_USDC_APP_ID is required in production.");
++  }
+ }

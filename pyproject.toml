@@ -1,0 +1,24 @@
+[tool.pyrefly]
+# algopy (Algorand Python) is a compiler-target DSL, not standard Python.
+# Pyrefly cannot resolve its types, so exclude the contracts directory entirely.
+project_excludes = [
+    "contracts/**",
+    "trestle_sdk/**",
+    "tests/**",
+    "contract.py",
+]
+
+[tool.pyright]
+# Same exclusion for Pylance / Pyright
+exclude = [
+    "contracts",
+    "trestle_sdk",
+    "tests",
+    "contract.py",
+]
+
+[tool.pytest.ini_options]
+# Register custom markers to suppress PytestUnknownMarkWarning
+markers = [
+    "integration: marks tests as integration tests requiring live Algorand testnet access (deselect with '-m not integration')",
+]

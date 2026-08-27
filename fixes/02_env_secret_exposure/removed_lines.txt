@@ -1,0 +1,8 @@
+The following lines should be REMOVED from frontend/.env:
+
+  ASA_ID=10458941
+  AGENT_MNEMONIC=soft bulk midnight mind brown swap coyote help door switch eyebrow wedding weapon taxi approve genuine latin human top insect rescue among wire abstract rude
+  VENICE_API_KEY=WmwvJjtMB2iUocy2ibSdMe5e6Fdw1zA6Kqp6fZ01j
+
+These belong exclusively in the root trestle_project/.env (used by Python SDK only).
+CRITICAL: Rotate the mnemonic and API key immediately — they may already be in git history.

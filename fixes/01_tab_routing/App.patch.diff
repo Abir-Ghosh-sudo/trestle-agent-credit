@@ -1,0 +1,14 @@
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -24,6 +24,7 @@ const MarketingHome       = lazy(() => import("./features/marketing/MarketingHome.jsx"));
+ const AgentOnboarding     = lazy(() => import("./features/onboarding/AgentOnboarding.jsx"));
+ const CreditPositionDashboard = lazy(() => import("./features/dashboard/CreditPositionDashboard.jsx"));
+ const CreditScorePanel    = lazy(() => import("./features/credit-score/CreditScorePanel.jsx"));
++const PaymentGatewayPanel = lazy(() => import("./features/payments/PaymentGatewayPanel.jsx")); // FIX 01
+ const DocsEntry           = lazy(() => import("./features/docs/DocsEntry.jsx"));
+
+@@ -131,6 +131,7 @@ export default function App() {
+               {/* Tab content */}
+               {activeTab === "position" && <CreditPositionDashboard />}
+               {activeTab === "score"    && <CreditScorePanel />}
++              {activeTab === "payment"  && <PaymentGatewayPanel />}   {/* FIX 01 */}

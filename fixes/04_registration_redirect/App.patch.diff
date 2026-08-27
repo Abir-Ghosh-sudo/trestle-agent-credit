@@ -1,0 +1,8 @@
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -119,7 +119,7 @@ export default function App() {
+           ) : !address || !isRegistered ? (
+             <div className="max-w-[960px] mx-auto px-4 md:px-6 py-4">
+-              <AgentOnboarding />
++              <AgentOnboarding onRegistered={() => setView("app")} />
+             </div>

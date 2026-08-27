@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trestle-sdk"
+version = "0.1.0"
+description = "LLM-gated credit SDK for the Trestle AI agent credit protocol on Algorand"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+  { name = "Trestle", email = "build@trestle.xyz" }
+]
+keywords = [
+  "algorand",
+  "ai-agents",
+  "credit",
+  "defi",
+  "llm",
+  "machine-to-machine",
+  "m2m",
+  "venice",
+  "anthropic",
+  "risk-oracle",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Office/Business :: Financial",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = [
+  "py-algorand-sdk>=2.7.0",
+  "openai>=1.0.0",
+  "pydantic>=2.0.0",
+  "python-dotenv>=1.0.0",
+  "click>=8.0.0",
+  "requests>=2.28.0",
+]
+
+[project.optional-dependencies]
+anthropic = [
+  "anthropic>=0.42.0",
+]
+x402 = [
+  "x402-avm[avm,httpx]>=2.0.0,<3.0.0",
+  "httpx>=0.28.1",
+]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-mock>=3.14.0",
+  "build>=1.2.0",
+  "twine>=5.0.0",
+]
+all = [
+  "anthropic>=0.42.0",
+  "x402-avm[avm,httpx]>=2.0.0,<3.0.0",
+  "httpx>=0.28.1",
+]
+
+[project.urls]
+Homepage = "https://trestle.xyz"
+Documentation = "https://github.com/ShahiTechnovation/Trestle/blob/main/trestle_sdk/README.md"
+Repository = "https://github.com/ShahiTechnovation/Trestle"
+"Bug Tracker" = "https://github.com/ShahiTechnovation/Trestle/issues"
+Changelog = "https://github.com/ShahiTechnovation/Trestle/blob/main/trestle_sdk/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = [".."]
+include = ["trestle_sdk*"]
+
+[tool.setuptools.package-data]
+trestle_sdk = ["py.typed", "README.md", "CHANGELOG.md"]
+
+[project.scripts]
+trestle = "trestle_sdk.cli:init"

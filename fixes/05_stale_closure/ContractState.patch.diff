@@ -1,0 +1,16 @@
+--- a/frontend/src/state/ContractState.jsx
++++ b/frontend/src/state/ContractState.jsx
+@@ -1160,7 +1160,10 @@ const callAutoDrawUsdc = useCallback(
+         } catch {
+-          liveTreasuryBal = Number(position.usdcTreasuryBalance);
++          // FIX 05: Do not fall back to stale React closure value.
++          // Treat algod failure as "treasury unknown" and proceed with swap
++          // to be safe (swap flow degrades gracefully with a direct draw attempt).
++          liveTreasuryBal = 0;
+         }
+
+@@ -1330,6 +1330,5 @@ const callAutoDrawUsdc = useCallback(
+     [address, activeWallet, makeSigner, fetchPosition, checkAssetOptedIn, addActivity,
+-     position.usdcTreasuryBalance, algoUsdcRate, callDrawUsdc]   // FIX: remove stale dep
++     algoUsdcRate, callDrawUsdc]
+   );

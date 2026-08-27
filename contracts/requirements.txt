@@ -1,0 +1,4 @@
+# Dependencies for contracts/deploy.py, deploy_router.py, deploy_usdc.py
+py-algorand-sdk>=2.7.0
+python-dotenv>=1.0.0
+puyapy>=5.8.0

@@ -1,0 +1,14 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="trestle-logo-grad" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6D5DF6"/>
+      <stop offset="55%" stop-color="#8B6FF8"/>
+      <stop offset="100%" stop-color="#00C2D1"/>
+    </linearGradient>
+  </defs>
+  <!-- Abstract "bridge/trestle" mark: two arches supporting a connecting span -->
+  <rect x="2" y="2" width="36" height="36" rx="11" fill="url(#trestle-logo-grad)"/>
+  <path d="M11 27V19C11 15.134 14.134 12 18 12H22C25.866 12 29 15.134 29 19V27" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <path d="M8 27H32" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="20" cy="19.5" r="2.25" fill="white"/>
+</svg>

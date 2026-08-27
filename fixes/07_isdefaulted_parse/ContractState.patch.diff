@@ -1,0 +1,9 @@
+--- a/frontend/src/state/ContractState.jsx
++++ b/frontend/src/state/ContractState.jsx
+@@ -324,7 +324,7 @@ const fetchPosition = useCallback(
+           algoPos = {
+             stake:        readLocalUint(kvs, "stake_amount"),
+             paymentCount,
+             outstanding:  readLocalUint(kvs, "outstanding"),
+-           isDefaulted:  readLocalUint(kvs, "is_defaulted") === 1n,
++           isDefaulted:  readLocalUint(kvs, "is_defaulted") > 0n,   // FIX 07: any non-zero = defaulted

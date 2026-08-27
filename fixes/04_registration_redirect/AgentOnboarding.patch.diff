@@ -1,0 +1,16 @@
+--- a/frontend/src/features/onboarding/AgentOnboarding.jsx
++++ b/frontend/src/features/onboarding/AgentOnboarding.jsx
+@@ -60,7 +60,7 @@ export default function AgentOnboarding() {
+-export default function AgentOnboarding() {
++export default function AgentOnboarding({ onRegistered }) {
+   ...
+   const handleRegister = async () => {
+     ...
+     try {
+       await callRegisterUnified(stakeInput, activateUsdc);
+       setTxStatus("success");
++      // Explicitly navigate after success — do not rely on reactive re-render alone
++      setTimeout(() => onRegistered?.(), 1500);
+       ...
+     }
+   };

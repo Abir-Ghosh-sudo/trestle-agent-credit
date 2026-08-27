@@ -1,0 +1,1422 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2 32 86400 2000000 500000 5000000 100000
+    bytecblock "treasury_balance" "outstanding" "payment_count" "stake_amount" "is_defaulted" "daily_drawn" "last_payment_round" "total_repaid" "day_start_round" "repay_by_round" "total_agents" "skip_attestation" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // contracts/contract.py:147
+    // self.treasury_balance = GlobalState(UInt64(0))
+    bytec_0 // "treasury_balance"
+    intc_0 // 0
+    app_global_put
+    // contracts/contract.py:148
+    // self.total_agents     = GlobalState(UInt64(0))
+    bytec 10 // "total_agents"
+    intc_0 // 0
+    app_global_put
+    // contracts/contract.py:149
+    // self.skip_attestation = GlobalState(UInt64(1))  # default: bypass for demo
+    bytec 11 // "skip_attestation"
+    intc_1 // 1
+    app_global_put
+
+main_after_if_else@2:
+    // contracts/contract.py:115
+    // class Bloopa(arc4.ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@18
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xf040dd0d 0x2b8906c2 0x111935c8 0xf97e9f27 0x88249d70 0x1330aef7 0xb3876e2a 0xb55d9c91 0x7cafaef3 // method "register(pay)void", method "record_payment(uint64)uint64", method "draw(uint64,byte[32])void", method "repay(pay)void", method "slash(address)void", method "get_position(address)(uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64)", method "seed_treasury(pay)void", method "set_signer(address)void", method "enable_attestation()void"
+    txna ApplicationArgs 0
+    match register record_payment draw repay slash get_position seed_treasury set_signer enable_attestation
+    err
+
+main_bare_routing@18:
+    // contracts/contract.py:115
+    // class Bloopa(arc4.ARC4Contract):
+    txn OnCompletion
+    switch main___algopy_default_create@19 main_opt_in@20
+    err
+
+main_opt_in@20:
+    // contracts/contract.py:166
+    // @arc4.baremethod(allow_actions=["OptIn"])
+    txn ApplicationID
+    assert
+    // contracts/contract.py:178
+    // self.stake_amount[Txn.sender]       = UInt64(0)
+    txn Sender
+    bytec_3 // "stake_amount"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:179
+    // self.payment_count[Txn.sender]      = UInt64(0)
+    txn Sender
+    bytec_2 // "payment_count"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:180
+    // self.total_repaid[Txn.sender]       = UInt64(0)
+    txn Sender
+    bytec 7 // "total_repaid"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:181
+    // self.outstanding[Txn.sender]        = UInt64(0)
+    txn Sender
+    bytec_1 // "outstanding"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:182
+    // self.is_defaulted[Txn.sender]       = UInt64(0)
+    txn Sender
+    bytec 4 // "is_defaulted"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:183
+    // self.last_payment_round[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec 6 // "last_payment_round"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:184
+    // self.daily_drawn[Txn.sender]        = UInt64(0)
+    txn Sender
+    bytec 5 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:185
+    // self.day_start_round[Txn.sender]    = UInt64(0)
+    txn Sender
+    bytec 8 // "day_start_round"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:186
+    // self.repay_by_round[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 9 // "repay_by_round"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:166
+    // @arc4.baremethod(allow_actions=["OptIn"])
+    intc_1 // 1
+    return
+
+main___algopy_default_create@19:
+    txn ApplicationID
+    !
+    return
+
+
+// contract.Bloopa.register[routing]() -> void:
+register:
+    // contracts/contract.py:192
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // contracts/contract.py:210
+    // pay.receiver == Global.current_application_address
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/contract.py:209-211
+    // assert (
+    //     pay.receiver == Global.current_application_address
+    // ), "Payment must be to application address"
+    assert // Payment must be to application address
+    // contracts/contract.py:212
+    // assert pay.amount >= UInt64(1_000_000), "Minimum stake is 1 ALGO"
+    gtxns Amount
+    dup
+    pushint 1000000
+    >=
+    assert // Minimum stake is 1 ALGO
+    // contracts/contract.py:214
+    // self.stake_amount[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    !
+    // contracts/contract.py:213-215
+    // assert (
+    //     self.stake_amount[Txn.sender] == UInt64(0)
+    // ), "Agent already registered"
+    assert // Agent already registered
+    // contracts/contract.py:217
+    // self.stake_amount[Txn.sender]       = pay.amount
+    txn Sender
+    bytec_3 // "stake_amount"
+    dig 2
+    app_local_put
+    // contracts/contract.py:218
+    // self.payment_count[Txn.sender]      = UInt64(0)
+    txn Sender
+    bytec_2 // "payment_count"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:219
+    // self.total_repaid[Txn.sender]       = UInt64(0)
+    txn Sender
+    bytec 7 // "total_repaid"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:220
+    // self.outstanding[Txn.sender]        = UInt64(0)
+    txn Sender
+    bytec_1 // "outstanding"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:221
+    // self.is_defaulted[Txn.sender]       = UInt64(0)
+    txn Sender
+    bytec 4 // "is_defaulted"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:222
+    // self.last_payment_round[Txn.sender] = op.Global.round
+    txn Sender
+    bytec 6 // "last_payment_round"
+    global Round
+    app_local_put
+    // contracts/contract.py:223
+    // self.daily_drawn[Txn.sender]        = UInt64(0)
+    txn Sender
+    bytec 5 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:224
+    // self.day_start_round[Txn.sender]    = op.Global.round
+    txn Sender
+    bytec 8 // "day_start_round"
+    global Round
+    app_local_put
+    // contracts/contract.py:225
+    // self.repay_by_round[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 9 // "repay_by_round"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:227
+    // self.treasury_balance.value += pay.amount
+    intc_0 // 0
+    bytec_0 // "treasury_balance"
+    app_global_get_ex
+    assert // check self.treasury_balance exists
+    dig 1
+    +
+    bytec_0 // "treasury_balance"
+    swap
+    app_global_put
+    // contracts/contract.py:228
+    // self.total_agents.value     += UInt64(1)
+    intc_0 // 0
+    bytec 10 // "total_agents"
+    app_global_get_ex
+    assert // check self.total_agents exists
+    intc_1 // 1
+    +
+    bytec 10 // "total_agents"
+    swap
+    app_global_put
+    // contracts/contract.py:232
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/contract.py:233
+    // stake=arc4.UInt64(pay.amount),
+    swap
+    itob
+    // contracts/contract.py:231-234
+    // AgentRegistered(
+    //     agent=arc4.Address(Txn.sender),
+    //     stake=arc4.UInt64(pay.amount),
+    // )
+    concat
+    // contracts/contract.py:230-235
+    // arc4.emit(
+    //     AgentRegistered(
+    //         agent=arc4.Address(Txn.sender),
+    //         stake=arc4.UInt64(pay.amount),
+    //     )
+    // )
+    pushbytes 0x8935af9d // method "AgentRegistered(address,uint64)"
+    swap
+    concat
+    log
+    // contracts/contract.py:192
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// contract.Bloopa.record_payment[routing]() -> void:
+record_payment:
+    // contracts/contract.py:241
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    // contracts/contract.py:259
+    // self.is_defaulted[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 4 // "is_defaulted"
+    app_local_get_ex
+    assert // check self.is_defaulted exists for account
+    !
+    // contracts/contract.py:258-260
+    // assert (
+    //     self.is_defaulted[Txn.sender] == UInt64(0)
+    // ), "Agent is defaulted"
+    assert // Agent is defaulted
+    // contracts/contract.py:262
+    // self.stake_amount[Txn.sender] > UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/contract.py:261-263
+    // assert (
+    //     self.stake_amount[Txn.sender] > UInt64(0)
+    // ), "Agent not registered"
+    assert // Agent not registered
+    // contracts/contract.py:265
+    // self.payment_count[Txn.sender]      += UInt64(1)
+    txn Sender
+    dup
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    intc_1 // 1
+    +
+    bytec_2 // "payment_count"
+    swap
+    app_local_put
+    // contracts/contract.py:266
+    // self.last_payment_round[Txn.sender]  = op.Global.round
+    txn Sender
+    bytec 6 // "last_payment_round"
+    global Round
+    app_local_put
+    // contracts/contract.py:268
+    // tier = self._get_tier(self.payment_count[Txn.sender])
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    // contracts/contract.py:272
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/contract.py:274
+    // tier=arc4.UInt64(tier),
+    swap
+    itob
+    // contracts/contract.py:271-275
+    // PaymentRecorded(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=amount,
+    //     tier=arc4.UInt64(tier),
+    // )
+    swap
+    uncover 2
+    concat
+    dig 1
+    concat
+    // contracts/contract.py:270-276
+    // arc4.emit(
+    //     PaymentRecorded(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=amount,
+    //         tier=arc4.UInt64(tier),
+    //     )
+    // )
+    pushbytes 0xc2535fa5 // method "PaymentRecorded(address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/contract.py:241
+    // @arc4.abimethod
+    bytec 12 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// contract.Bloopa.draw[routing]() -> void:
+draw:
+    pushbytes ""
+    dupn 2
+    // contracts/contract.py:284
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 2
+    dup
+    cover 2
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/contract.py:312
+    // self.is_defaulted[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 4 // "is_defaulted"
+    app_local_get_ex
+    assert // check self.is_defaulted exists for account
+    !
+    // contracts/contract.py:311-313
+    // assert (
+    //     self.is_defaulted[Txn.sender] == UInt64(0)
+    // ), "Agent is defaulted"
+    assert // Agent is defaulted
+    // contracts/contract.py:315
+    // self.stake_amount[Txn.sender] > UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec_3 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/contract.py:314-316
+    // assert (
+    //     self.stake_amount[Txn.sender] > UInt64(0)
+    // ), "Agent not registered"
+    assert // Agent not registered
+    // contracts/contract.py:318
+    // draw_amt = amount.native
+    btoi
+    // contracts/contract.py:319
+    // current_round = op.Global.round
+    global Round
+    // contracts/contract.py:321-322
+    // # ── Attestation verification (production path) ──
+    // if self.skip_attestation.value == UInt64(0):
+    intc_0 // 0
+    bytec 11 // "skip_attestation"
+    app_global_get_ex
+    assert // check self.skip_attestation exists
+    bnz draw_after_if_else@3
+    // contracts/contract.py:324
+    // Txn.sender.bytes
+    txn Sender
+    // contracts/contract.py:324-325
+    // Txn.sender.bytes
+    // + amount.bytes
+    dig 4
+    concat
+    // contracts/contract.py:326
+    // + op.itob(current_round)
+    dig 1
+    itob
+    // contracts/contract.py:324-326
+    // Txn.sender.bytes
+    // + amount.bytes
+    // + op.itob(current_round)
+    concat
+    // contracts/contract.py:323-327
+    // expected = op.sha256(
+    //     Txn.sender.bytes
+    //     + amount.bytes
+    //     + op.itob(current_round)
+    // )
+    sha256
+    // contracts/contract.py:328
+    // assert attestation_hash.bytes == expected, "Invalid attestation hash"
+    dig 3
+    ==
+    assert // Invalid attestation hash
+
+draw_after_if_else@3:
+    // contracts/contract.py:330-331
+    // # ── Daily window reset ──
+    // rounds_in_window = current_round - self.day_start_round[Txn.sender]
+    txn Sender
+    intc_0 // 0
+    bytec 8 // "day_start_round"
+    app_local_get_ex
+    assert // check self.day_start_round exists for account
+    dig 1
+    swap
+    -
+    // contracts/contract.py:332
+    // if rounds_in_window >= UInt64(DAY_IN_ROUNDS):
+    intc 4 // 86400
+    >=
+    bz draw_after_if_else@5
+    // contracts/contract.py:333
+    // self.daily_drawn[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 5 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:334
+    // self.day_start_round[Txn.sender] = current_round
+    txn Sender
+    bytec 8 // "day_start_round"
+    dig 2
+    app_local_put
+
+draw_after_if_else@5:
+    // contracts/contract.py:336-337
+    // # ── Tier lookup ──
+    // tier = self._get_tier(self.payment_count[Txn.sender])
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    dup
+    bury 7
+    // contracts/contract.py:339-340
+    // # ── Per-draw hard cap check ──
+    // if tier == UInt64(3):
+    pushint 3
+    ==
+    dup
+    bury 6
+    bz draw_else_body@7
+    // contracts/contract.py:341
+    // assert draw_amt <= UInt64(TIER_3_MAX_DRAW), "Exceeds tier max draw"
+    dig 1
+    intc 7 // 5000000
+    <=
+    assert // Exceeds tier max draw
+
+draw_after_if_else@14:
+    // contracts/contract.py:349-350
+    // # ── Daily cap check ──
+    // new_daily = self.daily_drawn[Txn.sender] + draw_amt
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "daily_drawn"
+    app_local_get_ex
+    assert // check self.daily_drawn exists for account
+    dig 2
+    +
+    bury 7
+    // contracts/contract.py:351
+    // if tier == UInt64(3):
+    dig 4
+    bz draw_else_body@16
+    // contracts/contract.py:352
+    // assert new_daily <= UInt64(TIER_3_DAILY_CAP), "Exceeds daily cap"
+    dig 6
+    pushint 25000000
+    <=
+    assert // Exceeds daily cap
+
+draw_after_if_else@23:
+    // contracts/contract.py:361
+    // Global.current_application_address.balance >= draw_amt
+    global CurrentApplicationAddress
+    acct_params_get AcctBalance
+    assert // account funded
+    dig 2
+    >=
+    // contracts/contract.py:360-362
+    // assert (
+    //     Global.current_application_address.balance >= draw_amt
+    // ), "Insufficient contract balance"
+    assert // Insufficient contract balance
+    // contracts/contract.py:364-366
+    // # ── Interest calculation ──
+    // # interest = (draw_amt * APR_BPS * DAY_IN_ROUNDS) / (10000 * ROUNDS_PER_YEAR)
+    // if tier == UInt64(3):
+    dig 4
+    bz draw_else_body@25
+    // contracts/contract.py:367
+    // apr_bps = UInt64(TIER_3_APR_BPS)
+    pushint 400
+
+draw_after_if_else@32:
+    // contracts/contract.py:375
+    // interest = (draw_amt * apr_bps * UInt64(DAY_IN_ROUNDS)) // (UInt64(10_000) * UInt64(ROUNDS_PER_YEAR))
+    dig 2
+    dup
+    uncover 2
+    *
+    intc 4 // 86400
+    *
+    pushint 315360000000
+    /
+    // contracts/contract.py:377-382
+    // # ── Send ALGO via inner transaction ──
+    // itxn.Payment(
+    //     receiver=Txn.sender,
+    //     amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // contracts/contract.py:381
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // contracts/contract.py:379
+    // receiver=Txn.sender,
+    txn Sender
+    dig 3
+    itxn_field Amount
+    itxn_field Receiver
+    // contracts/contract.py:377-378
+    // # ── Send ALGO via inner transaction ──
+    // itxn.Payment(
+    intc_1 // pay
+    itxn_field TypeEnum
+    itxn_field Fee
+    // contracts/contract.py:377-382
+    // # ── Send ALGO via inner transaction ──
+    // itxn.Payment(
+    //     receiver=Txn.sender,
+    //     amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // contracts/contract.py:384-385
+    // # ── Update state ──
+    // self.daily_drawn[Txn.sender]    = new_daily
+    txn Sender
+    bytec 5 // "daily_drawn"
+    dig 10
+    app_local_put
+    // contracts/contract.py:386
+    // self.outstanding[Txn.sender]   += draw_amt + interest
+    txn Sender
+    dup
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    assert // check self.outstanding exists for account
+    dig 3
+    dig 3
+    +
+    +
+    bytec_1 // "outstanding"
+    swap
+    app_local_put
+    // contracts/contract.py:387
+    // self.repay_by_round[Txn.sender] = current_round + UInt64(DAY_IN_ROUNDS)
+    dig 2
+    intc 4 // 86400
+    +
+    txn Sender
+    bytec 9 // "repay_by_round"
+    uncover 2
+    app_local_put
+    // contracts/contract.py:388
+    // self.treasury_balance.value    -= draw_amt
+    intc_0 // 0
+    bytec_0 // "treasury_balance"
+    app_global_get_ex
+    assert // check self.treasury_balance exists
+    uncover 2
+    -
+    bytec_0 // "treasury_balance"
+    swap
+    app_global_put
+    // contracts/contract.py:392
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/contract.py:394
+    // interest=arc4.UInt64(interest),
+    swap
+    itob
+    // contracts/contract.py:395
+    // outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    assert // check self.outstanding exists for account
+    itob
+    // contracts/contract.py:391-396
+    // CreditDrawn(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=arc4.UInt64(draw_amt),
+    //     interest=arc4.UInt64(interest),
+    //     outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    // )
+    uncover 2
+    dig 6
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // contracts/contract.py:390-397
+    // arc4.emit(
+    //     CreditDrawn(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=arc4.UInt64(draw_amt),
+    //         interest=arc4.UInt64(interest),
+    //         outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    //     )
+    // )
+    pushbytes 0x2a640d91 // method "CreditDrawn(address,uint64,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/contract.py:284
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+draw_else_body@25:
+    // contracts/contract.py:368
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_else_body@27
+    // contracts/contract.py:369
+    // apr_bps = UInt64(TIER_2_APR_BPS)
+    pushint 900
+    b draw_after_if_else@32
+
+draw_else_body@27:
+    // contracts/contract.py:370
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_else_body@29
+    // contracts/contract.py:371
+    // apr_bps = UInt64(TIER_1_APR_BPS)
+    pushint 1600
+    b draw_after_if_else@32
+
+draw_else_body@29:
+    // contracts/contract.py:373
+    // apr_bps = UInt64(TIER_0_APR_BPS)
+    pushint 2400
+    b draw_after_if_else@32
+
+draw_else_body@16:
+    // contracts/contract.py:353
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_else_body@18
+    // contracts/contract.py:354
+    // assert new_daily <= UInt64(TIER_2_DAILY_CAP), "Exceeds daily cap"
+    dig 6
+    pushint 10000000
+    <=
+    assert // Exceeds daily cap
+    b draw_after_if_else@23
+
+draw_else_body@18:
+    // contracts/contract.py:355
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_else_body@20
+    // contracts/contract.py:356
+    // assert new_daily <= UInt64(TIER_1_DAILY_CAP), "Exceeds daily cap"
+    dig 6
+    intc 5 // 2000000
+    <=
+    assert // Exceeds daily cap
+    b draw_after_if_else@23
+
+draw_else_body@20:
+    // contracts/contract.py:358
+    // assert new_daily <= UInt64(TIER_0_DAILY_CAP), "Exceeds daily cap"
+    dig 6
+    intc 6 // 500000
+    <=
+    assert // Exceeds daily cap
+    b draw_after_if_else@23
+
+draw_else_body@7:
+    // contracts/contract.py:342
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_else_body@9
+    // contracts/contract.py:343
+    // assert draw_amt <= UInt64(TIER_2_MAX_DRAW), "Exceeds tier max draw"
+    dig 1
+    intc 5 // 2000000
+    <=
+    assert // Exceeds tier max draw
+    b draw_after_if_else@14
+
+draw_else_body@9:
+    // contracts/contract.py:344
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_else_body@11
+    // contracts/contract.py:345
+    // assert draw_amt <= UInt64(TIER_1_MAX_DRAW), "Exceeds tier max draw"
+    dig 1
+    intc 6 // 500000
+    <=
+    assert // Exceeds tier max draw
+    b draw_after_if_else@14
+
+draw_else_body@11:
+    // contracts/contract.py:347
+    // assert draw_amt <= UInt64(TIER_0_MAX_DRAW), "Exceeds tier max draw"
+    dig 1
+    intc 8 // 100000
+    <=
+    assert // Exceeds tier max draw
+    b draw_after_if_else@14
+
+
+// contract.Bloopa.repay[routing]() -> void:
+repay:
+    // contracts/contract.py:403
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // contracts/contract.py:422
+    // pay.receiver == Global.current_application_address
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/contract.py:421-423
+    // assert (
+    //     pay.receiver == Global.current_application_address
+    // ), "Payment must be to application address"
+    assert // Payment must be to application address
+    // contracts/contract.py:424
+    // assert pay.amount > UInt64(0), "Repayment must be > 0"
+    gtxns Amount
+    dupn 2
+    assert // Repayment must be > 0
+    // contracts/contract.py:427
+    // current_outstanding = self.outstanding[Txn.sender]
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    swap
+    dup
+    cover 2
+    cover 3
+    assert // check self.outstanding exists for account
+    // contracts/contract.py:429
+    // if repay_amt >= current_outstanding:
+    >=
+    bz repay_else_body@3
+    // contracts/contract.py:430
+    // self.outstanding[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec_1 // "outstanding"
+    intc_0 // 0
+    app_local_put
+
+repay_after_if_else@4:
+    // contracts/contract.py:434
+    // self.total_repaid[Txn.sender]       += repay_amt
+    txn Sender
+    dup
+    intc_0 // 0
+    bytec 7 // "total_repaid"
+    app_local_get_ex
+    assert // check self.total_repaid exists for account
+    dig 3
+    dup
+    cover 3
+    +
+    bytec 7 // "total_repaid"
+    swap
+    app_local_put
+    // contracts/contract.py:435
+    // self.treasury_balance.value         += repay_amt
+    intc_0 // 0
+    bytec_0 // "treasury_balance"
+    app_global_get_ex
+    assert // check self.treasury_balance exists
+    dig 1
+    +
+    bytec_0 // "treasury_balance"
+    swap
+    app_global_put
+    // contracts/contract.py:436
+    // self.last_payment_round[Txn.sender]  = op.Global.round
+    txn Sender
+    bytec 6 // "last_payment_round"
+    global Round
+    app_local_put
+    // contracts/contract.py:440
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/contract.py:441
+    // amount=arc4.UInt64(repay_amt),
+    swap
+    itob
+    // contracts/contract.py:442
+    // outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    assert // check self.outstanding exists for account
+    itob
+    // contracts/contract.py:439-443
+    // Repaid(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=arc4.UInt64(repay_amt),
+    //     outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    // )
+    cover 2
+    concat
+    swap
+    concat
+    // contracts/contract.py:438-444
+    // arc4.emit(
+    //     Repaid(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=arc4.UInt64(repay_amt),
+    //         outstanding=arc4.UInt64(self.outstanding[Txn.sender]),
+    //     )
+    // )
+    pushbytes 0x54965a93 // method "Repaid(address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/contract.py:403
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+repay_else_body@3:
+    // contracts/contract.py:432
+    // self.outstanding[Txn.sender] = current_outstanding - repay_amt
+    dup
+    dig 2
+    -
+    txn Sender
+    bytec_1 // "outstanding"
+    uncover 2
+    app_local_put
+    b repay_after_if_else@4
+
+
+// contract.Bloopa.slash[routing]() -> void:
+slash:
+    // contracts/contract.py:450
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/contract.py:471
+    // self.outstanding[agent_addr] > UInt64(0)
+    dup
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    assert // check self.outstanding exists for account
+    // contracts/contract.py:470-472
+    // assert (
+    //     self.outstanding[agent_addr] > UInt64(0)
+    // ), "Agent has no outstanding debt"
+    assert // Agent has no outstanding debt
+    // contracts/contract.py:474
+    // payment_count = self.payment_count[agent_addr]
+    dup
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    // contracts/contract.py:475
+    // rounds_since  = op.Global.round - self.last_payment_round[agent_addr]
+    global Round
+    uncover 2
+    intc_0 // 0
+    bytec 6 // "last_payment_round"
+    app_local_get_ex
+    assert // check self.last_payment_round exists for account
+    -
+    swap
+    // contracts/contract.py:478
+    // payment_count == UInt64(0) or rounds_since > UInt64(30)
+    bz slash_bool_true@3
+    dup
+    pushint 30
+    >
+    bz slash_bool_false@4
+
+slash_bool_true@3:
+    intc_1 // 1
+
+slash_bool_merge@5:
+    // contracts/contract.py:477-479
+    // assert (
+    //     payment_count == UInt64(0) or rounds_since > UInt64(30)
+    // ), "Agent is not delinquent"
+    assert // Agent is not delinquent
+    // contracts/contract.py:481
+    // stake = self.stake_amount[agent_addr]
+    dig 1
+    dup
+    intc_0 // 0
+    bytec_3 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/contract.py:483
+    // caller_reward    = stake // UInt64(10)
+    dup
+    pushint 10
+    /
+    // contracts/contract.py:484
+    // treasury_portion = stake - caller_reward
+    dup2
+    -
+    // contracts/contract.py:486-487
+    // # Slash the agent
+    // self.is_defaulted[agent_addr]  = UInt64(1)
+    dig 3
+    bytec 4 // "is_defaulted"
+    intc_1 // 1
+    app_local_put
+    // contracts/contract.py:488
+    // self.stake_amount[agent_addr]  = UInt64(0)
+    dig 3
+    bytec_3 // "stake_amount"
+    intc_0 // 0
+    app_local_put
+    // contracts/contract.py:489
+    // self.treasury_balance.value   += treasury_portion
+    intc_0 // 0
+    bytec_0 // "treasury_balance"
+    app_global_get_ex
+    assert // check self.treasury_balance exists
+    +
+    bytec_0 // "treasury_balance"
+    swap
+    app_global_put
+    // contracts/contract.py:491-496
+    // # Reward the caller
+    // itxn.Payment(
+    //     receiver=Txn.sender,
+    //     amount=caller_reward,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // contracts/contract.py:495
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // contracts/contract.py:493
+    // receiver=Txn.sender,
+    txn Sender
+    dig 2
+    itxn_field Amount
+    itxn_field Receiver
+    // contracts/contract.py:491-492
+    // # Reward the caller
+    // itxn.Payment(
+    intc_1 // pay
+    itxn_field TypeEnum
+    itxn_field Fee
+    // contracts/contract.py:491-496
+    // # Reward the caller
+    // itxn.Payment(
+    //     receiver=Txn.sender,
+    //     amount=caller_reward,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // contracts/contract.py:501
+    // stake_burned=arc4.UInt64(stake),
+    swap
+    itob
+    // contracts/contract.py:502
+    // caller_reward=arc4.UInt64(caller_reward),
+    swap
+    itob
+    // contracts/contract.py:499-503
+    // AgentSlashed(
+    //     agent=arc4.Address(agent_addr),
+    //     stake_burned=arc4.UInt64(stake),
+    //     caller_reward=arc4.UInt64(caller_reward),
+    // )
+    cover 2
+    concat
+    swap
+    concat
+    // contracts/contract.py:498-504
+    // arc4.emit(
+    //     AgentSlashed(
+    //         agent=arc4.Address(agent_addr),
+    //         stake_burned=arc4.UInt64(stake),
+    //         caller_reward=arc4.UInt64(caller_reward),
+    //     )
+    // )
+    pushbytes 0x50fdc64a // method "AgentSlashed(address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/contract.py:450
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+slash_bool_false@4:
+    intc_0 // 0
+    b slash_bool_merge@5
+
+
+// contract.Bloopa.get_position[routing]() -> void:
+get_position:
+    pushbytes ""
+    // contracts/contract.py:510
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/contract.py:532
+    // tier = self._get_tier(self.payment_count[addr])
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    dup
+    // contracts/contract.py:534-535
+    // # Derive tier_max_draw on the fly
+    // if tier == UInt64(3):
+    pushint 3
+    ==
+    bz get_position_else_body@3
+    // contracts/contract.py:536
+    // tier_max_draw = UInt64(TIER_3_MAX_DRAW)
+    intc 7 // 5000000
+    // contracts/contract.py:537
+    // apr_bps       = UInt64(TIER_3_APR_BPS)
+    pushint 400
+    bury 4
+
+get_position_after_if_else@10:
+    // contracts/contract.py:549
+    // arc4.UInt64(self.stake_amount[addr]),
+    dig 2
+    dup
+    intc_0 // 0
+    bytec_3 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    itob
+    // contracts/contract.py:550
+    // arc4.UInt64(self.payment_count[addr]),
+    dig 1
+    intc_0 // 0
+    bytec_2 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    itob
+    // contracts/contract.py:551
+    // arc4.UInt64(tier_max_draw),
+    uncover 3
+    itob
+    // contracts/contract.py:552
+    // arc4.UInt64(self.outstanding[addr]),
+    dig 3
+    intc_0 // 0
+    bytec_1 // "outstanding"
+    app_local_get_ex
+    assert // check self.outstanding exists for account
+    itob
+    // contracts/contract.py:553
+    // arc4.UInt64(self.is_defaulted[addr]),
+    dig 4
+    intc_0 // 0
+    bytec 4 // "is_defaulted"
+    app_local_get_ex
+    assert // check self.is_defaulted exists for account
+    itob
+    // contracts/contract.py:554
+    // arc4.UInt64(tier),
+    dig 6
+    itob
+    // contracts/contract.py:555
+    // arc4.UInt64(apr_bps),
+    dig 9
+    itob
+    // contracts/contract.py:556
+    // arc4.UInt64(self.daily_drawn[addr]),
+    dig 7
+    intc_0 // 0
+    bytec 5 // "daily_drawn"
+    app_local_get_ex
+    assert // check self.daily_drawn exists for account
+    itob
+    // contracts/contract.py:557
+    // arc4.UInt64(self.repay_by_round[addr]),
+    uncover 8
+    intc_0 // 0
+    bytec 9 // "repay_by_round"
+    app_local_get_ex
+    assert // check self.repay_by_round exists for account
+    itob
+    // contracts/contract.py:510
+    // @arc4.abimethod(readonly=True)
+    uncover 8
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 12 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+get_position_else_body@3:
+    // contracts/contract.py:538
+    // elif tier == UInt64(2):
+    dup
+    intc_2 // 2
+    ==
+    bz get_position_else_body@5
+    // contracts/contract.py:539
+    // tier_max_draw = UInt64(TIER_2_MAX_DRAW)
+    intc 5 // 2000000
+    // contracts/contract.py:540
+    // apr_bps       = UInt64(TIER_2_APR_BPS)
+    pushint 900
+    bury 4
+    b get_position_after_if_else@10
+
+get_position_else_body@5:
+    // contracts/contract.py:541
+    // elif tier == UInt64(1):
+    dup
+    intc_1 // 1
+    ==
+    bz get_position_else_body@7
+    // contracts/contract.py:542
+    // tier_max_draw = UInt64(TIER_1_MAX_DRAW)
+    intc 6 // 500000
+    // contracts/contract.py:543
+    // apr_bps       = UInt64(TIER_1_APR_BPS)
+    pushint 1600
+    bury 4
+    b get_position_after_if_else@10
+
+get_position_else_body@7:
+    // contracts/contract.py:545
+    // tier_max_draw = UInt64(TIER_0_MAX_DRAW)
+    intc 8 // 100000
+    // contracts/contract.py:546
+    // apr_bps       = UInt64(TIER_0_APR_BPS)
+    pushint 2400
+    bury 4
+    b get_position_after_if_else@10
+
+
+// contract.Bloopa.seed_treasury[routing]() -> void:
+seed_treasury:
+    // contracts/contract.py:564
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // contracts/contract.py:580
+    // Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    // contracts/contract.py:579-581
+    // assert (
+    //     Txn.sender == Global.creator_address
+    // ), "Only creator can seed treasury"
+    assert // Only creator can seed treasury
+    // contracts/contract.py:583
+    // pay.receiver == Global.current_application_address
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/contract.py:582-584
+    // assert (
+    //     pay.receiver == Global.current_application_address
+    // ), "Payment must be to application address"
+    assert // Payment must be to application address
+    // contracts/contract.py:585
+    // assert pay.amount > UInt64(0), "Amount must be > 0"
+    gtxns Amount
+    dup
+    assert // Amount must be > 0
+    // contracts/contract.py:587
+    // self.treasury_balance.value += pay.amount
+    intc_0 // 0
+    bytec_0 // "treasury_balance"
+    app_global_get_ex
+    assert // check self.treasury_balance exists
+    +
+    bytec_0 // "treasury_balance"
+    swap
+    app_global_put
+    // contracts/contract.py:564
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// contract.Bloopa.set_signer[routing]() -> void:
+set_signer:
+    // contracts/contract.py:593
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/contract.py:607
+    // Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    // contracts/contract.py:606-608
+    // assert (
+    //     Txn.sender == Global.creator_address
+    // ), "Only creator can set signer"
+    assert // Only creator can set signer
+    // contracts/contract.py:609
+    // self.protocol_signer.value = signer.native
+    pushbytes "protocol_signer"
+    swap
+    app_global_put
+    // contracts/contract.py:593
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// contract.Bloopa.enable_attestation[routing]() -> void:
+enable_attestation:
+    // contracts/contract.py:631
+    // Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    // contracts/contract.py:630-632
+    // assert (
+    //     Txn.sender == Global.creator_address
+    // ), "Only creator can enable attestation"
+    assert // Only creator can enable attestation
+    // contracts/contract.py:633
+    // self.skip_attestation.value = UInt64(0)
+    bytec 11 // "skip_attestation"
+    intc_0 // 0
+    app_global_put
+    // contracts/contract.py:615
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// contract.Bloopa._get_tier(payment_count: uint64) -> uint64:
+_get_tier:
+    // contracts/contract.py:639-640
+    // @algopy.subroutine
+    // def _get_tier(self, payment_count: UInt64) -> UInt64:
+    proto 1 1
+    // contracts/contract.py:653
+    // if payment_count >= UInt64(TIER_3_THRESHOLD):
+    frame_dig -1
+    pushint 100
+    >=
+    bz _get_tier_else_body@2
+    // contracts/contract.py:654
+    // return UInt64(3)
+    pushint 3
+    retsub
+
+_get_tier_else_body@2:
+    // contracts/contract.py:655
+    // elif payment_count >= UInt64(TIER_2_THRESHOLD):
+    frame_dig -1
+    pushint 50
+    >=
+    bz _get_tier_else_body@4
+    // contracts/contract.py:656
+    // return UInt64(2)
+    intc_2 // 2
+    retsub
+
+_get_tier_else_body@4:
+    // contracts/contract.py:657
+    // elif payment_count >= UInt64(TIER_1_THRESHOLD):
+    frame_dig -1
+    pushint 10
+    >=
+    bz _get_tier_else_body@6
+    // contracts/contract.py:658
+    // return UInt64(1)
+    intc_1 // 1
+    retsub
+
+_get_tier_else_body@6:
+    // contracts/contract.py:660
+    // return UInt64(0)
+    intc_0 // 0
+    retsub

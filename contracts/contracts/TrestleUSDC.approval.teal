@@ -1,0 +1,1602 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2 4 86400 2000000 500000 5000000 25000000 315360000000 10000000 100000
+    bytecblock "usdc_treasury_balance" "payment_count" "usdc_outstanding" "usdc_asa_id" "daily_drawn" "stake_amount" "day_start_round" "skip_attestation" "total_agents" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // contracts/bloopa_usdc.py:150
+    // self.usdc_asa_id           = GlobalState(UInt64(0))
+    bytec_3 // "usdc_asa_id"
+    intc_0 // 0
+    app_global_put
+    // contracts/bloopa_usdc.py:151
+    // self.usdc_treasury_balance = GlobalState(UInt64(0))
+    bytec_0 // "usdc_treasury_balance"
+    intc_0 // 0
+    app_global_put
+    // contracts/bloopa_usdc.py:152
+    // self.skip_attestation      = GlobalState(UInt64(1))  # demo by default
+    bytec 7 // "skip_attestation"
+    intc_1 // 1
+    app_global_put
+    // contracts/bloopa_usdc.py:153
+    // self.total_agents          = GlobalState(UInt64(0))
+    bytec 8 // "total_agents"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // contracts/bloopa_usdc.py:125
+    // class BloopUSDC(arc4.ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@18
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xf040dd0d 0xcc0b101f 0xd53edb5d 0xac9d0d41 0x1668dfcd 0x1b486840 0x2b8906c2 0x605de0cb 0x7cafaef3 // method "register(pay)void", method "configure_usdc(uint64)void", method "seed_treasury(axfer)void", method "draw_usdc(uint64,byte[32])void", method "draw_and_pay(uint64,address,byte[32])void", method "repay_usdc(axfer)void", method "record_payment(uint64)uint64", method "get_position(address)(uint64,uint64,uint64,uint64,uint64)", method "enable_attestation()void"
+    txna ApplicationArgs 0
+    match register configure_usdc seed_treasury draw_usdc draw_and_pay repay_usdc record_payment get_position enable_attestation
+    err
+
+main_bare_routing@18:
+    // contracts/bloopa_usdc.py:125
+    // class BloopUSDC(arc4.ARC4Contract):
+    txn OnCompletion
+    switch main___algopy_default_create@19 main_opt_in@20
+    err
+
+main_opt_in@20:
+    // contracts/bloopa_usdc.py:165
+    // @arc4.baremethod(allow_actions=["OptIn"])
+    txn ApplicationID
+    assert
+    // contracts/bloopa_usdc.py:168
+    // self.stake_amount[Txn.sender]    = UInt64(0)
+    txn Sender
+    bytec 5 // "stake_amount"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:169
+    // self.payment_count[Txn.sender]   = UInt64(0)
+    txn Sender
+    bytec_1 // "payment_count"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:170
+    // self.usdc_outstanding[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:171
+    // self.daily_drawn[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 4 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:172
+    // self.day_start_round[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec 6 // "day_start_round"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:165
+    // @arc4.baremethod(allow_actions=["OptIn"])
+    intc_1 // 1
+    return
+
+main___algopy_default_create@19:
+    txn ApplicationID
+    !
+    return
+
+
+// bloopa_usdc.BloopUSDC.register[routing]() -> void:
+register:
+    // contracts/bloopa_usdc.py:178
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    // contracts/bloopa_usdc.py:193
+    // pay.receiver == Global.current_application_address
+    dup
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/bloopa_usdc.py:192-194
+    // assert (
+    //     pay.receiver == Global.current_application_address
+    // ), "Payment must be to application"
+    assert // Payment must be to application
+    // contracts/bloopa_usdc.py:195
+    // assert pay.amount >= UInt64(1_000_000), "Minimum stake is 1 ALGO"
+    gtxns Amount
+    dup
+    pushint 1000000
+    >=
+    assert // Minimum stake is 1 ALGO
+    // contracts/bloopa_usdc.py:197
+    // self.stake_amount[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    !
+    // contracts/bloopa_usdc.py:196-198
+    // assert (
+    //     self.stake_amount[Txn.sender] == UInt64(0)
+    // ), "Already registered"
+    assert // Already registered
+    // contracts/bloopa_usdc.py:200
+    // self.stake_amount[Txn.sender]     = pay.amount
+    txn Sender
+    bytec 5 // "stake_amount"
+    dig 2
+    app_local_put
+    // contracts/bloopa_usdc.py:201
+    // self.payment_count[Txn.sender]    = UInt64(0)
+    txn Sender
+    bytec_1 // "payment_count"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:202
+    // self.usdc_outstanding[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:203
+    // self.daily_drawn[Txn.sender]      = UInt64(0)
+    txn Sender
+    bytec 4 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:204
+    // self.day_start_round[Txn.sender]  = op.Global.round
+    txn Sender
+    bytec 6 // "day_start_round"
+    global Round
+    app_local_put
+    // contracts/bloopa_usdc.py:205
+    // self.total_agents.value          += UInt64(1)
+    intc_0 // 0
+    bytec 8 // "total_agents"
+    app_global_get_ex
+    assert // check self.total_agents exists
+    intc_1 // 1
+    +
+    bytec 8 // "total_agents"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:209
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/bloopa_usdc.py:210
+    // stake=arc4.UInt64(pay.amount),
+    swap
+    itob
+    // contracts/bloopa_usdc.py:208-211
+    // AgentRegistered(
+    //     agent=arc4.Address(Txn.sender),
+    //     stake=arc4.UInt64(pay.amount),
+    // )
+    concat
+    // contracts/bloopa_usdc.py:207-212
+    // arc4.emit(
+    //     AgentRegistered(
+    //         agent=arc4.Address(Txn.sender),
+    //         stake=arc4.UInt64(pay.amount),
+    //     )
+    // )
+    pushbytes 0x8935af9d // method "AgentRegistered(address,uint64)"
+    swap
+    concat
+    log
+    // contracts/bloopa_usdc.py:178
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC.configure_usdc[routing]() -> void:
+configure_usdc:
+    // contracts/bloopa_usdc.py:218
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // contracts/bloopa_usdc.py:236
+    // Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    // contracts/bloopa_usdc.py:235-237
+    // assert (
+    //     Txn.sender == Global.creator_address
+    // ), "Only creator"
+    assert // Only creator
+    // contracts/bloopa_usdc.py:239
+    // self.usdc_asa_id.value == UInt64(0)
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    !
+    // contracts/bloopa_usdc.py:238-240
+    // assert (
+    //     self.usdc_asa_id.value == UInt64(0)
+    // ), "Already configured"
+    assert // Already configured
+    // contracts/bloopa_usdc.py:242-247
+    // itxn.AssetTransfer(
+    //     xfer_asset=usdc_asset.id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=UInt64(0),
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // contracts/bloopa_usdc.py:246
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // contracts/bloopa_usdc.py:244
+    // asset_receiver=Global.current_application_address,
+    global CurrentApplicationAddress
+    // contracts/bloopa_usdc.py:245
+    // asset_amount=UInt64(0),
+    intc_0 // 0
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    dig 1
+    itxn_field XferAsset
+    // contracts/bloopa_usdc.py:242
+    // itxn.AssetTransfer(
+    intc_3 // axfer
+    itxn_field TypeEnum
+    itxn_field Fee
+    // contracts/bloopa_usdc.py:242-247
+    // itxn.AssetTransfer(
+    //     xfer_asset=usdc_asset.id,
+    //     asset_receiver=Global.current_application_address,
+    //     asset_amount=UInt64(0),
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // contracts/bloopa_usdc.py:249
+    // self.usdc_asa_id.value = usdc_asset.id
+    bytec_3 // "usdc_asa_id"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:218
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC.seed_treasury[routing]() -> void:
+seed_treasury:
+    // contracts/bloopa_usdc.py:255
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_3 // axfer
+    ==
+    assert // transaction type is axfer
+    // contracts/bloopa_usdc.py:270
+    // self.usdc_asa_id.value > UInt64(0)
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    // contracts/bloopa_usdc.py:269-271
+    // assert (
+    //     self.usdc_asa_id.value > UInt64(0)
+    // ), "Call configure_usdc first"
+    dup
+    assert // Call configure_usdc first
+    // contracts/bloopa_usdc.py:273
+    // axfer.xfer_asset.id == self.usdc_asa_id.value
+    dig 1
+    gtxns XferAsset
+    ==
+    // contracts/bloopa_usdc.py:272-274
+    // assert (
+    //     axfer.xfer_asset.id == self.usdc_asa_id.value
+    // ), "Wrong ASA"
+    assert // Wrong ASA
+    // contracts/bloopa_usdc.py:276
+    // axfer.asset_receiver == Global.current_application_address
+    dup
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/bloopa_usdc.py:275-277
+    // assert (
+    //     axfer.asset_receiver == Global.current_application_address
+    // ), "Must send to contract"
+    assert // Must send to contract
+    // contracts/bloopa_usdc.py:278
+    // assert axfer.asset_amount > UInt64(0), "Amount must be > 0"
+    gtxns AssetAmount
+    dup
+    assert // Amount must be > 0
+    // contracts/bloopa_usdc.py:280
+    // self.usdc_treasury_balance.value += axfer.asset_amount
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    +
+    bytec_0 // "usdc_treasury_balance"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:255
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC.draw_usdc[routing]() -> void:
+draw_usdc:
+    pushbytes ""
+    dupn 2
+    // contracts/bloopa_usdc.py:287
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 2
+    dup
+    cover 2
+    len
+    pushint 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bloopa_usdc.py:309
+    // self.usdc_asa_id.value > UInt64(0)
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    // contracts/bloopa_usdc.py:308-310
+    // assert (
+    //     self.usdc_asa_id.value > UInt64(0)
+    // ), "USDC not configured"
+    assert // USDC not configured
+    // contracts/bloopa_usdc.py:312
+    // self.stake_amount[Txn.sender] > UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/bloopa_usdc.py:311-313
+    // assert (
+    //     self.stake_amount[Txn.sender] > UInt64(0)
+    // ), "Not registered"
+    assert // Not registered
+    // contracts/bloopa_usdc.py:315
+    // self.usdc_outstanding[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "usdc_outstanding"
+    app_local_get_ex
+    assert // check self.usdc_outstanding exists for account
+    !
+    // contracts/bloopa_usdc.py:314-316
+    // assert (
+    //     self.usdc_outstanding[Txn.sender] == UInt64(0)
+    // ), "Outstanding USDC debt — repay first"
+    assert // Outstanding USDC debt — repay first
+    // contracts/bloopa_usdc.py:318
+    // draw_amt = amount.native
+    btoi
+    // contracts/bloopa_usdc.py:319
+    // current_round = op.Global.round
+    global Round
+    // contracts/bloopa_usdc.py:321-322
+    // # ── Attestation (skip in demo mode) ──
+    // if self.skip_attestation.value == UInt64(0):
+    intc_0 // 0
+    bytec 7 // "skip_attestation"
+    app_global_get_ex
+    assert // check self.skip_attestation exists
+    bnz draw_usdc_after_if_else@3
+    // contracts/bloopa_usdc.py:324
+    // Txn.sender.bytes
+    txn Sender
+    // contracts/bloopa_usdc.py:324-325
+    // Txn.sender.bytes
+    // + amount.bytes
+    dig 4
+    concat
+    // contracts/bloopa_usdc.py:326
+    // + op.itob(current_round)
+    dig 1
+    itob
+    // contracts/bloopa_usdc.py:324-326
+    // Txn.sender.bytes
+    // + amount.bytes
+    // + op.itob(current_round)
+    concat
+    // contracts/bloopa_usdc.py:323-327
+    // expected = op.sha256(
+    //     Txn.sender.bytes
+    //     + amount.bytes
+    //     + op.itob(current_round)
+    // )
+    sha256
+    // contracts/bloopa_usdc.py:328
+    // assert attestation_hash.bytes == expected, "Invalid attestation"
+    dig 3
+    ==
+    assert // Invalid attestation
+
+draw_usdc_after_if_else@3:
+    // contracts/bloopa_usdc.py:330-331
+    // # ── Daily window reset ──
+    // elapsed = current_round - self.day_start_round[Txn.sender]
+    txn Sender
+    intc_0 // 0
+    bytec 6 // "day_start_round"
+    app_local_get_ex
+    assert // check self.day_start_round exists for account
+    dig 1
+    swap
+    -
+    // contracts/bloopa_usdc.py:332
+    // if elapsed >= DAY_IN_ROUNDS:
+    intc 4 // 86400
+    >=
+    bz draw_usdc_after_if_else@5
+    // contracts/bloopa_usdc.py:333
+    // self.daily_drawn[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 4 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:334
+    // self.day_start_round[Txn.sender] = current_round
+    txn Sender
+    bytec 6 // "day_start_round"
+    dig 2
+    app_local_put
+
+draw_usdc_after_if_else@5:
+    // contracts/bloopa_usdc.py:336
+    // tier = self._get_tier(self.payment_count[Txn.sender])
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    dup
+    bury 7
+    // contracts/bloopa_usdc.py:338-339
+    // # ── Per-draw cap ──
+    // if tier == UInt64(3):
+    pushint 3
+    ==
+    dup
+    bury 6
+    bz draw_usdc_else_body@7
+    // contracts/bloopa_usdc.py:340
+    // assert draw_amt <= TIER_3_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 7 // 5000000
+    <=
+    assert // Exceeds draw cap
+
+draw_usdc_after_if_else@14:
+    // contracts/bloopa_usdc.py:348-349
+    // # ── Daily cap ──
+    // new_daily = self.daily_drawn[Txn.sender] + draw_amt
+    txn Sender
+    intc_0 // 0
+    bytec 4 // "daily_drawn"
+    app_local_get_ex
+    assert // check self.daily_drawn exists for account
+    dig 2
+    +
+    bury 7
+    // contracts/bloopa_usdc.py:350
+    // if tier == UInt64(3):
+    dig 4
+    bz draw_usdc_else_body@16
+    // contracts/bloopa_usdc.py:351
+    // assert new_daily <= TIER_3_DAILY_CAP, "Exceeds daily cap"
+    dig 6
+    intc 8 // 25000000
+    <=
+    assert // Exceeds daily cap
+
+draw_usdc_after_if_else@23:
+    // contracts/bloopa_usdc.py:360
+    // self.usdc_treasury_balance.value >= draw_amt
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    dig 2
+    >=
+    // contracts/bloopa_usdc.py:359-361
+    // assert (
+    //     self.usdc_treasury_balance.value >= draw_amt
+    // ), "Insufficient treasury"
+    assert // Insufficient treasury
+    // contracts/bloopa_usdc.py:363-364
+    // # ── Interest ──
+    // if tier == UInt64(3):
+    dig 4
+    bz draw_usdc_else_body@25
+    // contracts/bloopa_usdc.py:365
+    // apr = UInt64(TIER_3_APR_BPS)
+    pushint 400
+
+draw_usdc_after_if_else@32:
+    // contracts/bloopa_usdc.py:373
+    // interest = (draw_amt * apr * DAY_IN_ROUNDS) // (
+    dig 2
+    dup
+    uncover 2
+    *
+    intc 4 // 86400
+    *
+    // contracts/bloopa_usdc.py:374
+    // UInt64(10_000) * ROUNDS_PER_YEAR
+    intc 9 // 315360000000
+    // contracts/bloopa_usdc.py:373-375
+    // interest = (draw_amt * apr * DAY_IN_ROUNDS) // (
+    //     UInt64(10_000) * ROUNDS_PER_YEAR
+    // )
+    /
+    // contracts/bloopa_usdc.py:377-383
+    // # ── Inner transfer: send USDC to agent ──
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asa_id.value,
+    //     asset_receiver=Txn.sender,
+    //     asset_amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // contracts/bloopa_usdc.py:382
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // contracts/bloopa_usdc.py:379
+    // xfer_asset=self.usdc_asa_id.value,
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    // contracts/bloopa_usdc.py:380
+    // asset_receiver=Txn.sender,
+    txn Sender
+    dig 4
+    itxn_field AssetAmount
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // contracts/bloopa_usdc.py:377-378
+    // # ── Inner transfer: send USDC to agent ──
+    // itxn.AssetTransfer(
+    intc_3 // axfer
+    itxn_field TypeEnum
+    itxn_field Fee
+    // contracts/bloopa_usdc.py:377-383
+    // # ── Inner transfer: send USDC to agent ──
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asa_id.value,
+    //     asset_receiver=Txn.sender,
+    //     asset_amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // contracts/bloopa_usdc.py:385-386
+    // # ── Update state ──
+    // self.daily_drawn[Txn.sender]      = new_daily
+    txn Sender
+    bytec 4 // "daily_drawn"
+    dig 10
+    app_local_put
+    // contracts/bloopa_usdc.py:387
+    // self.usdc_outstanding[Txn.sender] = draw_amt + interest
+    dup2
+    +
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    dig 2
+    app_local_put
+    // contracts/bloopa_usdc.py:388
+    // self.usdc_treasury_balance.value -= draw_amt
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    uncover 3
+    -
+    bytec_0 // "usdc_treasury_balance"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:392
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/bloopa_usdc.py:394
+    // interest=arc4.UInt64(interest),
+    uncover 2
+    itob
+    // contracts/bloopa_usdc.py:395
+    // outstanding=arc4.UInt64(draw_amt + interest),
+    uncover 2
+    itob
+    // contracts/bloopa_usdc.py:391-396
+    // UsdcDrawn(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=arc4.UInt64(draw_amt),
+    //     interest=arc4.UInt64(interest),
+    //     outstanding=arc4.UInt64(draw_amt + interest),
+    // )
+    uncover 2
+    dig 6
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    // contracts/bloopa_usdc.py:390-397
+    // arc4.emit(
+    //     UsdcDrawn(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=arc4.UInt64(draw_amt),
+    //         interest=arc4.UInt64(interest),
+    //         outstanding=arc4.UInt64(draw_amt + interest),
+    //     )
+    // )
+    pushbytes 0x18e514d1 // method "UsdcDrawn(address,uint64,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/bloopa_usdc.py:287
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+draw_usdc_else_body@25:
+    // contracts/bloopa_usdc.py:366
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_usdc_else_body@27
+    // contracts/bloopa_usdc.py:367
+    // apr = UInt64(TIER_2_APR_BPS)
+    pushint 900
+    b draw_usdc_after_if_else@32
+
+draw_usdc_else_body@27:
+    // contracts/bloopa_usdc.py:368
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_usdc_else_body@29
+    // contracts/bloopa_usdc.py:369
+    // apr = UInt64(TIER_1_APR_BPS)
+    pushint 1600
+    b draw_usdc_after_if_else@32
+
+draw_usdc_else_body@29:
+    // contracts/bloopa_usdc.py:371
+    // apr = UInt64(TIER_0_APR_BPS)
+    pushint 2400
+    b draw_usdc_after_if_else@32
+
+draw_usdc_else_body@16:
+    // contracts/bloopa_usdc.py:352
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_usdc_else_body@18
+    // contracts/bloopa_usdc.py:353
+    // assert new_daily <= TIER_2_DAILY_CAP, "Exceeds daily cap"
+    dig 6
+    intc 10 // 10000000
+    <=
+    assert // Exceeds daily cap
+    b draw_usdc_after_if_else@23
+
+draw_usdc_else_body@18:
+    // contracts/bloopa_usdc.py:354
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_usdc_else_body@20
+    // contracts/bloopa_usdc.py:355
+    // assert new_daily <= TIER_1_DAILY_CAP, "Exceeds daily cap"
+    dig 6
+    intc 5 // 2000000
+    <=
+    assert // Exceeds daily cap
+    b draw_usdc_after_if_else@23
+
+draw_usdc_else_body@20:
+    // contracts/bloopa_usdc.py:357
+    // assert new_daily <= TIER_0_DAILY_CAP, "Exceeds daily cap"
+    dig 6
+    intc 6 // 500000
+    <=
+    assert // Exceeds daily cap
+    b draw_usdc_after_if_else@23
+
+draw_usdc_else_body@7:
+    // contracts/bloopa_usdc.py:341
+    // elif tier == UInt64(2):
+    dig 5
+    intc_2 // 2
+    ==
+    bz draw_usdc_else_body@9
+    // contracts/bloopa_usdc.py:342
+    // assert draw_amt <= TIER_2_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 5 // 2000000
+    <=
+    assert // Exceeds draw cap
+    b draw_usdc_after_if_else@14
+
+draw_usdc_else_body@9:
+    // contracts/bloopa_usdc.py:343
+    // elif tier == UInt64(1):
+    dig 5
+    intc_1 // 1
+    ==
+    bz draw_usdc_else_body@11
+    // contracts/bloopa_usdc.py:344
+    // assert draw_amt <= TIER_1_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 6 // 500000
+    <=
+    assert // Exceeds draw cap
+    b draw_usdc_after_if_else@14
+
+draw_usdc_else_body@11:
+    // contracts/bloopa_usdc.py:346
+    // assert draw_amt <= TIER_0_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 11 // 100000
+    <=
+    assert // Exceeds draw cap
+    b draw_usdc_after_if_else@14
+
+
+// bloopa_usdc.BloopUSDC.draw_and_pay[routing]() -> void:
+draw_and_pay:
+    pushbytes ""
+    dupn 2
+    // contracts/bloopa_usdc.py:411
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 2
+    dup
+    cover 2
+    len
+    pushint 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 3
+    dup
+    cover 2
+    len
+    pushint 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bloopa_usdc.py:436
+    // self.usdc_asa_id.value > UInt64(0)
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    // contracts/bloopa_usdc.py:435-437
+    // assert (
+    //     self.usdc_asa_id.value > UInt64(0)
+    // ), "USDC not configured"
+    assert // USDC not configured
+    // contracts/bloopa_usdc.py:439
+    // self.stake_amount[Txn.sender] > UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/bloopa_usdc.py:438-440
+    // assert (
+    //     self.stake_amount[Txn.sender] > UInt64(0)
+    // ), "Not registered"
+    assert // Not registered
+    // contracts/bloopa_usdc.py:442
+    // self.usdc_outstanding[Txn.sender] == UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "usdc_outstanding"
+    app_local_get_ex
+    assert // check self.usdc_outstanding exists for account
+    !
+    // contracts/bloopa_usdc.py:441-443
+    // assert (
+    //     self.usdc_outstanding[Txn.sender] == UInt64(0)
+    // ), "Outstanding USDC debt — repay first"
+    assert // Outstanding USDC debt — repay first
+    // contracts/bloopa_usdc.py:445
+    // draw_amt = amount.native
+    btoi
+    // contracts/bloopa_usdc.py:446
+    // current_round = op.Global.round
+    global Round
+    // contracts/bloopa_usdc.py:448-449
+    // # ── Attestation ──
+    // if self.skip_attestation.value == UInt64(0):
+    intc_0 // 0
+    bytec 7 // "skip_attestation"
+    app_global_get_ex
+    assert // check self.skip_attestation exists
+    bnz draw_and_pay_after_if_else@3
+    // contracts/bloopa_usdc.py:451
+    // Txn.sender.bytes
+    txn Sender
+    // contracts/bloopa_usdc.py:451-452
+    // Txn.sender.bytes
+    // + amount.bytes
+    dig 5
+    concat
+    // contracts/bloopa_usdc.py:453
+    // + op.itob(current_round)
+    dig 1
+    itob
+    // contracts/bloopa_usdc.py:451-453
+    // Txn.sender.bytes
+    // + amount.bytes
+    // + op.itob(current_round)
+    concat
+    // contracts/bloopa_usdc.py:450-454
+    // expected = op.sha256(
+    //     Txn.sender.bytes
+    //     + amount.bytes
+    //     + op.itob(current_round)
+    // )
+    sha256
+    // contracts/bloopa_usdc.py:455
+    // assert attestation_hash.bytes == expected, "Invalid attestation"
+    dig 3
+    ==
+    assert // Invalid attestation
+
+draw_and_pay_after_if_else@3:
+    // contracts/bloopa_usdc.py:457-458
+    // # ── Daily window reset ──
+    // elapsed = current_round - self.day_start_round[Txn.sender]
+    txn Sender
+    intc_0 // 0
+    bytec 6 // "day_start_round"
+    app_local_get_ex
+    assert // check self.day_start_round exists for account
+    dig 1
+    swap
+    -
+    // contracts/bloopa_usdc.py:459
+    // if elapsed >= DAY_IN_ROUNDS:
+    intc 4 // 86400
+    >=
+    bz draw_and_pay_after_if_else@5
+    // contracts/bloopa_usdc.py:460
+    // self.daily_drawn[Txn.sender]     = UInt64(0)
+    txn Sender
+    bytec 4 // "daily_drawn"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:461
+    // self.day_start_round[Txn.sender] = current_round
+    txn Sender
+    bytec 6 // "day_start_round"
+    dig 2
+    app_local_put
+
+draw_and_pay_after_if_else@5:
+    // contracts/bloopa_usdc.py:463
+    // tier = self._get_tier(self.payment_count[Txn.sender])
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    dup
+    bury 8
+    // contracts/bloopa_usdc.py:465-466
+    // # ── Per-draw cap ──
+    // if tier == UInt64(3):
+    pushint 3
+    ==
+    dup
+    bury 7
+    bz draw_and_pay_else_body@7
+    // contracts/bloopa_usdc.py:467
+    // assert draw_amt <= TIER_3_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 7 // 5000000
+    <=
+    assert // Exceeds draw cap
+
+draw_and_pay_after_if_else@14:
+    // contracts/bloopa_usdc.py:475-476
+    // # ── Daily cap ──
+    // new_daily = self.daily_drawn[Txn.sender] + draw_amt
+    txn Sender
+    intc_0 // 0
+    bytec 4 // "daily_drawn"
+    app_local_get_ex
+    assert // check self.daily_drawn exists for account
+    dig 2
+    +
+    bury 8
+    // contracts/bloopa_usdc.py:477
+    // if tier == UInt64(3):
+    dig 5
+    bz draw_and_pay_else_body@16
+    // contracts/bloopa_usdc.py:478
+    // assert new_daily <= TIER_3_DAILY_CAP, "Exceeds daily cap"
+    dig 7
+    intc 8 // 25000000
+    <=
+    assert // Exceeds daily cap
+
+draw_and_pay_after_if_else@23:
+    // contracts/bloopa_usdc.py:487
+    // self.usdc_treasury_balance.value >= draw_amt
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    dig 2
+    >=
+    // contracts/bloopa_usdc.py:486-488
+    // assert (
+    //     self.usdc_treasury_balance.value >= draw_amt
+    // ), "Insufficient treasury"
+    assert // Insufficient treasury
+    // contracts/bloopa_usdc.py:490-491
+    // # ── Interest ──
+    // if tier == UInt64(3):
+    dig 5
+    bz draw_and_pay_else_body@25
+    // contracts/bloopa_usdc.py:492
+    // apr = UInt64(TIER_3_APR_BPS)
+    pushint 400
+
+draw_and_pay_after_if_else@32:
+    // contracts/bloopa_usdc.py:500
+    // interest = (draw_amt * apr * DAY_IN_ROUNDS) // (
+    dig 2
+    dup
+    uncover 2
+    *
+    intc 4 // 86400
+    *
+    // contracts/bloopa_usdc.py:501
+    // UInt64(10_000) * ROUNDS_PER_YEAR
+    intc 9 // 315360000000
+    // contracts/bloopa_usdc.py:500-502
+    // interest = (draw_amt * apr * DAY_IN_ROUNDS) // (
+    //     UInt64(10_000) * ROUNDS_PER_YEAR
+    // )
+    /
+    // contracts/bloopa_usdc.py:504-510
+    // # ── Inner transfer: send USDC to PAYEE (not sender) ──
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asa_id.value,
+    //     asset_receiver=payee.native,
+    //     asset_amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_begin
+    // contracts/bloopa_usdc.py:509
+    // fee=Global.min_txn_fee,
+    global MinTxnFee
+    // contracts/bloopa_usdc.py:506
+    // xfer_asset=self.usdc_asa_id.value,
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    dig 3
+    itxn_field AssetAmount
+    dig 7
+    dup
+    cover 5
+    itxn_field AssetReceiver
+    itxn_field XferAsset
+    // contracts/bloopa_usdc.py:504-505
+    // # ── Inner transfer: send USDC to PAYEE (not sender) ──
+    // itxn.AssetTransfer(
+    intc_3 // axfer
+    itxn_field TypeEnum
+    itxn_field Fee
+    // contracts/bloopa_usdc.py:504-510
+    // # ── Inner transfer: send USDC to PAYEE (not sender) ──
+    // itxn.AssetTransfer(
+    //     xfer_asset=self.usdc_asa_id.value,
+    //     asset_receiver=payee.native,
+    //     asset_amount=draw_amt,
+    //     fee=Global.min_txn_fee,
+    // ).submit()
+    itxn_submit
+    // contracts/bloopa_usdc.py:512-513
+    // # ── Update state ──
+    // self.daily_drawn[Txn.sender]      = new_daily
+    txn Sender
+    bytec 4 // "daily_drawn"
+    dig 12
+    app_local_put
+    // contracts/bloopa_usdc.py:514
+    // self.usdc_outstanding[Txn.sender] = draw_amt + interest
+    dig 1
+    +
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    dig 2
+    app_local_put
+    // contracts/bloopa_usdc.py:515
+    // self.usdc_treasury_balance.value -= draw_amt
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    uncover 2
+    -
+    bytec_0 // "usdc_treasury_balance"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:519
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/bloopa_usdc.py:522
+    // outstanding=arc4.UInt64(draw_amt + interest),
+    swap
+    itob
+    // contracts/bloopa_usdc.py:518-523
+    // UsdcX402Paid(
+    //     agent=arc4.Address(Txn.sender),
+    //     payee=payee,
+    //     amount=arc4.UInt64(draw_amt),
+    //     outstanding=arc4.UInt64(draw_amt + interest),
+    // )
+    swap
+    uncover 2
+    concat
+    dig 6
+    concat
+    swap
+    concat
+    // contracts/bloopa_usdc.py:517-524
+    // arc4.emit(
+    //     UsdcX402Paid(
+    //         agent=arc4.Address(Txn.sender),
+    //         payee=payee,
+    //         amount=arc4.UInt64(draw_amt),
+    //         outstanding=arc4.UInt64(draw_amt + interest),
+    //     )
+    // )
+    pushbytes 0x8109809a // method "UsdcX402Paid(address,address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/bloopa_usdc.py:411
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+draw_and_pay_else_body@25:
+    // contracts/bloopa_usdc.py:493
+    // elif tier == UInt64(2):
+    dig 6
+    intc_2 // 2
+    ==
+    bz draw_and_pay_else_body@27
+    // contracts/bloopa_usdc.py:494
+    // apr = UInt64(TIER_2_APR_BPS)
+    pushint 900
+    b draw_and_pay_after_if_else@32
+
+draw_and_pay_else_body@27:
+    // contracts/bloopa_usdc.py:495
+    // elif tier == UInt64(1):
+    dig 6
+    intc_1 // 1
+    ==
+    bz draw_and_pay_else_body@29
+    // contracts/bloopa_usdc.py:496
+    // apr = UInt64(TIER_1_APR_BPS)
+    pushint 1600
+    b draw_and_pay_after_if_else@32
+
+draw_and_pay_else_body@29:
+    // contracts/bloopa_usdc.py:498
+    // apr = UInt64(TIER_0_APR_BPS)
+    pushint 2400
+    b draw_and_pay_after_if_else@32
+
+draw_and_pay_else_body@16:
+    // contracts/bloopa_usdc.py:479
+    // elif tier == UInt64(2):
+    dig 6
+    intc_2 // 2
+    ==
+    bz draw_and_pay_else_body@18
+    // contracts/bloopa_usdc.py:480
+    // assert new_daily <= TIER_2_DAILY_CAP, "Exceeds daily cap"
+    dig 7
+    intc 10 // 10000000
+    <=
+    assert // Exceeds daily cap
+    b draw_and_pay_after_if_else@23
+
+draw_and_pay_else_body@18:
+    // contracts/bloopa_usdc.py:481
+    // elif tier == UInt64(1):
+    dig 6
+    intc_1 // 1
+    ==
+    bz draw_and_pay_else_body@20
+    // contracts/bloopa_usdc.py:482
+    // assert new_daily <= TIER_1_DAILY_CAP, "Exceeds daily cap"
+    dig 7
+    intc 5 // 2000000
+    <=
+    assert // Exceeds daily cap
+    b draw_and_pay_after_if_else@23
+
+draw_and_pay_else_body@20:
+    // contracts/bloopa_usdc.py:484
+    // assert new_daily <= TIER_0_DAILY_CAP, "Exceeds daily cap"
+    dig 7
+    intc 6 // 500000
+    <=
+    assert // Exceeds daily cap
+    b draw_and_pay_after_if_else@23
+
+draw_and_pay_else_body@7:
+    // contracts/bloopa_usdc.py:468
+    // elif tier == UInt64(2):
+    dig 6
+    intc_2 // 2
+    ==
+    bz draw_and_pay_else_body@9
+    // contracts/bloopa_usdc.py:469
+    // assert draw_amt <= TIER_2_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 5 // 2000000
+    <=
+    assert // Exceeds draw cap
+    b draw_and_pay_after_if_else@14
+
+draw_and_pay_else_body@9:
+    // contracts/bloopa_usdc.py:470
+    // elif tier == UInt64(1):
+    dig 6
+    intc_1 // 1
+    ==
+    bz draw_and_pay_else_body@11
+    // contracts/bloopa_usdc.py:471
+    // assert draw_amt <= TIER_1_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 6 // 500000
+    <=
+    assert // Exceeds draw cap
+    b draw_and_pay_after_if_else@14
+
+draw_and_pay_else_body@11:
+    // contracts/bloopa_usdc.py:473
+    // assert draw_amt <= TIER_0_MAX_DRAW, "Exceeds draw cap"
+    dig 1
+    intc 11 // 100000
+    <=
+    assert // Exceeds draw cap
+    b draw_and_pay_after_if_else@14
+
+
+// bloopa_usdc.BloopUSDC.repay_usdc[routing]() -> void:
+repay_usdc:
+    // contracts/bloopa_usdc.py:530
+    // @arc4.abimethod
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dup
+    gtxns TypeEnum
+    intc_3 // axfer
+    ==
+    assert // transaction type is axfer
+    // contracts/bloopa_usdc.py:546
+    // axfer.xfer_asset.id == self.usdc_asa_id.value
+    dup
+    gtxns XferAsset
+    intc_0 // 0
+    bytec_3 // "usdc_asa_id"
+    app_global_get_ex
+    assert // check self.usdc_asa_id exists
+    ==
+    // contracts/bloopa_usdc.py:545-547
+    // assert (
+    //     axfer.xfer_asset.id == self.usdc_asa_id.value
+    // ), "Wrong ASA"
+    assert // Wrong ASA
+    // contracts/bloopa_usdc.py:549
+    // axfer.asset_receiver == Global.current_application_address
+    dup
+    gtxns AssetReceiver
+    global CurrentApplicationAddress
+    ==
+    // contracts/bloopa_usdc.py:548-550
+    // assert (
+    //     axfer.asset_receiver == Global.current_application_address
+    // ), "Must send to contract"
+    assert // Must send to contract
+    // contracts/bloopa_usdc.py:551
+    // assert axfer.asset_amount > UInt64(0), "Amount must be > 0"
+    gtxns AssetAmount
+    dupn 2
+    assert // Amount must be > 0
+    // contracts/bloopa_usdc.py:554
+    // current_outstanding = self.usdc_outstanding[Txn.sender]
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "usdc_outstanding"
+    app_local_get_ex
+    swap
+    dup
+    cover 2
+    cover 3
+    assert // check self.usdc_outstanding exists for account
+    // contracts/bloopa_usdc.py:556
+    // if repay_amt >= current_outstanding:
+    >=
+    bz repay_usdc_else_body@3
+    // contracts/bloopa_usdc.py:557
+    // self.usdc_outstanding[Txn.sender] = UInt64(0)
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    intc_0 // 0
+    app_local_put
+    // contracts/bloopa_usdc.py:558-559
+    // # Increment payment_count when debt is fully cleared
+    // self.payment_count[Txn.sender] += UInt64(1)
+    txn Sender
+    dup
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    intc_1 // 1
+    +
+    bytec_1 // "payment_count"
+    swap
+    app_local_put
+
+repay_usdc_after_if_else@4:
+    // contracts/bloopa_usdc.py:563
+    // self.usdc_treasury_balance.value += repay_amt
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    dig 2
+    dup
+    cover 2
+    +
+    bytec_0 // "usdc_treasury_balance"
+    swap
+    app_global_put
+    // contracts/bloopa_usdc.py:567
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/bloopa_usdc.py:568
+    // amount=arc4.UInt64(repay_amt),
+    swap
+    itob
+    // contracts/bloopa_usdc.py:569
+    // outstanding=arc4.UInt64(self.usdc_outstanding[Txn.sender]),
+    txn Sender
+    intc_0 // 0
+    bytec_2 // "usdc_outstanding"
+    app_local_get_ex
+    assert // check self.usdc_outstanding exists for account
+    itob
+    // contracts/bloopa_usdc.py:566-570
+    // UsdcRepaid(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=arc4.UInt64(repay_amt),
+    //     outstanding=arc4.UInt64(self.usdc_outstanding[Txn.sender]),
+    // )
+    cover 2
+    concat
+    swap
+    concat
+    // contracts/bloopa_usdc.py:565-571
+    // arc4.emit(
+    //     UsdcRepaid(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=arc4.UInt64(repay_amt),
+    //         outstanding=arc4.UInt64(self.usdc_outstanding[Txn.sender]),
+    //     )
+    // )
+    pushbytes 0xb597d8da // method "UsdcRepaid(address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/bloopa_usdc.py:530
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+repay_usdc_else_body@3:
+    // contracts/bloopa_usdc.py:561
+    // self.usdc_outstanding[Txn.sender] = current_outstanding - repay_amt
+    dup
+    dig 2
+    -
+    txn Sender
+    bytec_2 // "usdc_outstanding"
+    uncover 2
+    app_local_put
+    b repay_usdc_after_if_else@4
+
+
+// bloopa_usdc.BloopUSDC.record_payment[routing]() -> void:
+record_payment:
+    // contracts/bloopa_usdc.py:577
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    // contracts/bloopa_usdc.py:592
+    // self.stake_amount[Txn.sender] > UInt64(0)
+    txn Sender
+    intc_0 // 0
+    bytec 5 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    // contracts/bloopa_usdc.py:591-593
+    // assert (
+    //     self.stake_amount[Txn.sender] > UInt64(0)
+    // ), "Not registered"
+    assert // Not registered
+    // contracts/bloopa_usdc.py:595
+    // self.payment_count[Txn.sender] += UInt64(1)
+    txn Sender
+    dup
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    intc_1 // 1
+    +
+    bytec_1 // "payment_count"
+    swap
+    app_local_put
+    // contracts/bloopa_usdc.py:596
+    // tier = self._get_tier(self.payment_count[Txn.sender])
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    // contracts/bloopa_usdc.py:600
+    // agent=arc4.Address(Txn.sender),
+    txn Sender
+    // contracts/bloopa_usdc.py:602
+    // tier=arc4.UInt64(tier),
+    swap
+    itob
+    // contracts/bloopa_usdc.py:599-603
+    // UsdcPaymentRecorded(
+    //     agent=arc4.Address(Txn.sender),
+    //     amount=amount,
+    //     tier=arc4.UInt64(tier),
+    // )
+    swap
+    uncover 2
+    concat
+    dig 1
+    concat
+    // contracts/bloopa_usdc.py:598-604
+    // arc4.emit(
+    //     UsdcPaymentRecorded(
+    //         agent=arc4.Address(Txn.sender),
+    //         amount=amount,
+    //         tier=arc4.UInt64(tier),
+    //     )
+    // )
+    pushbytes 0x2c6554df // method "UsdcPaymentRecorded(address,uint64,uint64)"
+    swap
+    concat
+    log
+    // contracts/bloopa_usdc.py:577
+    // @arc4.abimethod
+    bytec 9 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC.get_position[routing]() -> void:
+get_position:
+    // contracts/bloopa_usdc.py:611
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // contracts/bloopa_usdc.py:632
+    // tier = self._get_tier(self.payment_count[addr])
+    dup
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    callsub _get_tier
+    // contracts/bloopa_usdc.py:634
+    // arc4.UInt64(self.usdc_outstanding[addr]),
+    dig 1
+    intc_0 // 0
+    bytec_2 // "usdc_outstanding"
+    app_local_get_ex
+    assert // check self.usdc_outstanding exists for account
+    itob
+    // contracts/bloopa_usdc.py:635
+    // arc4.UInt64(self.usdc_treasury_balance.value),
+    intc_0 // 0
+    bytec_0 // "usdc_treasury_balance"
+    app_global_get_ex
+    assert // check self.usdc_treasury_balance exists
+    itob
+    // contracts/bloopa_usdc.py:636
+    // arc4.UInt64(self.payment_count[addr]),
+    dig 3
+    intc_0 // 0
+    bytec_1 // "payment_count"
+    app_local_get_ex
+    assert // check self.payment_count exists for account
+    itob
+    // contracts/bloopa_usdc.py:637
+    // arc4.UInt64(self.stake_amount[addr]),
+    uncover 4
+    intc_0 // 0
+    bytec 5 // "stake_amount"
+    app_local_get_ex
+    assert // check self.stake_amount exists for account
+    itob
+    // contracts/bloopa_usdc.py:638
+    // arc4.UInt64(tier),
+    uncover 4
+    itob
+    // contracts/bloopa_usdc.py:611
+    // @arc4.abimethod(readonly=True)
+    uncover 4
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec 9 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC.enable_attestation[routing]() -> void:
+enable_attestation:
+    // contracts/bloopa_usdc.py:649
+    // Txn.sender == Global.creator_address
+    txn Sender
+    global CreatorAddress
+    ==
+    // contracts/bloopa_usdc.py:648-650
+    // assert (
+    //     Txn.sender == Global.creator_address
+    // ), "Only creator"
+    assert // Only creator
+    // contracts/bloopa_usdc.py:651
+    // self.skip_attestation.value = UInt64(0)
+    bytec 7 // "skip_attestation"
+    intc_0 // 0
+    app_global_put
+    // contracts/bloopa_usdc.py:645
+    // @arc4.abimethod
+    intc_1 // 1
+    return
+
+
+// bloopa_usdc.BloopUSDC._get_tier(payment_count: uint64) -> uint64:
+_get_tier:
+    // contracts/bloopa_usdc.py:657-658
+    // @algopy.subroutine
+    // def _get_tier(self, payment_count: UInt64) -> UInt64:
+    proto 1 1
+    // contracts/bloopa_usdc.py:660
+    // if payment_count >= TIER_3_THRESHOLD:
+    frame_dig -1
+    pushint 100
+    >=
+    bz _get_tier_else_body@2
+    // contracts/bloopa_usdc.py:661
+    // return UInt64(3)
+    pushint 3
+    retsub
+
+_get_tier_else_body@2:
+    // contracts/bloopa_usdc.py:662
+    // elif payment_count >= TIER_2_THRESHOLD:
+    frame_dig -1
+    pushint 50
+    >=
+    bz _get_tier_else_body@4
+    // contracts/bloopa_usdc.py:663
+    // return UInt64(2)
+    intc_2 // 2
+    retsub
+
+_get_tier_else_body@4:
+    // contracts/bloopa_usdc.py:664
+    // elif payment_count >= TIER_1_THRESHOLD:
+    frame_dig -1
+    pushint 10
+    >=
+    bz _get_tier_else_body@6
+    // contracts/bloopa_usdc.py:665
+    // return UInt64(1)
+    intc_1 // 1
+    retsub
+
+_get_tier_else_body@6:
+    // contracts/bloopa_usdc.py:667
+    // return UInt64(0)
+    intc_0 // 0
+    retsub

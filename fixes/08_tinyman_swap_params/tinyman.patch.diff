@@ -1,0 +1,15 @@
+--- a/frontend/src/lib/tinyman.js
++++ b/frontend/src/lib/tinyman.js
+@@ -118,10 +118,11 @@ export async function buildSwapTxns(microAlgoIn, microUsdcMin, pool, quote, user
+   const txns = await Swap.v2.generateTxns({
+     client: algodClient,
+     pool,
+     swapType: SwapType.FixedInput,
+     assetIn:  { ...ALGO_ASSET, id: ALGO_ASA_ID },
+     assetOut: { ...USDC_ASSET, id: USDC_ASA_ID },
+     initiatorAddr: userAddress,
+     slippage: 0.02,
++    amount: BigInt(microAlgoIn),         // FIX 08: always supply explicit amount
++    minimumReceived: BigInt(microUsdcMin), // FIX 08: enforce slippage minimum
+     ...(quote ? { quote } : {}),
+   });

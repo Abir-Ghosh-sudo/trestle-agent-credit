@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "contracts",
+    "trestle_sdk",
+    "tests",
+    "contract.py"
+  ],
+  "reportMissingModuleSource": "none"
+}

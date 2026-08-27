@@ -1,0 +1,9 @@
+--- a/frontend/src/state/ContractState.jsx
++++ b/frontend/src/state/ContractState.jsx
+@@ -1387,7 +1387,8 @@ const callDrawAndPay = useCallback(
+         const result = await atc.execute(algodClient, 4);
+         addActivity(`x402 pay: ${(amountMicroUsdc/1e6).toFixed(4)} USDC -> ${payeeAddress.slice(0,8)}...`);
+         await fetchPosition(address);
+-        return result.txIDs?.[0];
++        // FIX 06: Use method result txID — robust regardless of group position
++        return result.methodResults?.[0]?.txID ?? result.txIDs?.[0];
